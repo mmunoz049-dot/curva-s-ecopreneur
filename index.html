@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#002478">
+<meta name="description" content="Curva S de control de plazo · Ecopreneur">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Curva S">
+<title>Curva S · Control de Plazo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: barra de obra arriba (proyecto + pestañas), informe en grilla 2 columnas que colapsa a 1 en teléfono */
+:root{
+  --bg:#F3F4F9; --surface:#FFFFFF; --surface-2:#E8EAF4; --line:#D7DBEA; --brand:#002478;
+  --ink:#002478; --ink-2:#535C82; --ink-3:#7F87AC;
+  --plan:#5966AE; --real:#002478; --delay:#B8492F; --ahead:#0A8246; --ep:#D9861C; --warn-bg:#FBEDE8; --ok-bg:#E3F2EA;
+  --input:#FFF8E1; --focus:#5966AE;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1230; --surface:#121B40; --surface-2:#19234D; --line:#2A3566; --brand:#0F2C8A;
+  --ink:#E6E9F6; --ink-2:#A8B0D6; --ink-3:#7A83AE;
+  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326;
+  --input:#2A2818; --focus:#9AA5E6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1230; --surface:#121B40; --surface-2:#19234D; --line:#2A3566; --brand:#0F2C8A;
+  --ink:#E6E9F6; --ink-2:#A8B0D6; --ink-3:#7A83AE;
+  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326;
+  --input:#2A2818; --focus:#9AA5E6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--brand)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:.01em}
+h2{font-size:1.25rem;font-weight:700}
+h3{font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.num,td.n,.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* barra superior */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);color:var(--ink);border-bottom:3px solid var(--brand);--bg:var(--ink)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:10px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.15rem;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand svg{width:26px;height:20px}
+.brand .logo{display:inline-flex;background:#fff;border-radius:6px;padding:2px 6px}.brand>.ttl{padding-left:10px;border-left:2px solid var(--line)}.brand .logo img{height:40px;width:auto;display:block}
+.projsel{display:flex;gap:8px;align-items:center;flex:1 1 260px;min-width:0}
+.projsel select{flex:1;min-width:0;background:transparent;color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);border-radius:6px;padding:6px 8px}
+.projsel select option{color:#002478;background:#fff}
+.tabs{display:flex;gap:2px;overflow-x:auto;max-width:100%}
+.tab{background:none;border:0;color:color-mix(in srgb,var(--bg) 70%,transparent);padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:600;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--brand);color:#fff}
+.btn-ghost-top{background:none;border:1px solid color-mix(in srgb,var(--bg) 35%,transparent);color:var(--bg);border-radius:6px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+
+main{padding-block:20px 48px;display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 12px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.danger{color:var(--delay);border-color:color-mix(in srgb,var(--delay) 45%,transparent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.muted{color:var(--ink-2)}
+.small{font-size:.85rem}
+.note{font-size:.85rem;color:var(--ink-2)}
+
+/* encabezado del informe */
+.rephead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end}
+.rephead h1{font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:700;line-height:1.1}
+.rephead .meta{color:var(--ink-2);font-size:.95rem}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-weight:700;font-size:.9rem}
+.chip.late{background:var(--warn-bg);color:var(--delay)}
+.chip.ok{background:var(--ok-bg);color:var(--ahead)}
+.chip.ahead{background:var(--ok-bg);color:var(--ahead)}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:12px 14px;display:grid;gap:2px;align-content:start}
+.kpi .l{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);font-weight:600}
+.kpi .v{font-family:var(--f-display);font-size:1.9rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:.8rem;color:var(--ink-3)}
+.kpi.date .v{font-size:1.45rem;white-space:nowrap}
+.kpi.bad .v{color:var(--delay)} .kpi.good .v{color:var(--ahead)}
+
+.grid2{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:980px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.stack{display:grid;gap:18px;min-width:0}
+
+/* gráfico */
+.chartcard h2{margin-bottom:4px}
+svg.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--f-body);fill:var(--ink-2);font-size:12px}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .plan{stroke:var(--plan);stroke-width:3.2;fill:none;stroke-linejoin:round}
+.chart .real{stroke:var(--real);stroke-width:3.2;fill:none;stroke-linejoin:round}
+.chart .proj{stroke:var(--real);stroke-width:2.4;fill:none;stroke-dasharray:8 6}
+.chart .today{stroke:var(--ink-3);stroke-width:1.2;stroke-dasharray:2 4}
+.chart .arrow{stroke:var(--delay);stroke-width:2;fill:none}
+.chart .arrow.good{stroke:var(--ahead)}
+.chart .ahd{fill:var(--delay)} .chart .ahd.good{fill:var(--ahead)}
+.chart .lbl{fill:var(--delay);font-size:13px;font-weight:600;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.chart .lbl.good{fill:var(--ahead)}
+.chart .spi{fill:var(--ink);font-family:var(--f-display);font-size:30px;font-weight:700}
+.chart .spis{fill:var(--ink-2);font-size:12.5px}
+.chart .dot{fill:var(--real)} .chart .dotbg{fill:var(--surface)}
+.chart .epm{fill:var(--ep);stroke:var(--surface);stroke-width:1.5}
+.chart .bp{fill:var(--plan)} .chart .br{fill:var(--real)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.85rem;color:var(--ink-2);margin-top:6px}
+.legend i{display:inline-block;width:22px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
+.legend i.d{border-top-style:dashed}
+.legend i.m{width:10px;height:10px;border:0;background:var(--ep);transform:rotate(45deg);margin-right:8px}
+
+/* tablas */
+.tw{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--surface-2);vertical-align:middle}
+td.n,th.n{text-align:right;white-space:nowrap}
+td.f{color:var(--ink-3);font-size:.8rem}
+.bad{color:var(--delay)} .good{color:var(--ahead)}
+tr.hl td{background:var(--warn-bg)}
+.bar{height:8px;background:var(--surface-2);border-radius:4px;position:relative;min-width:80px}
+.bar span{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.bar .p{background:color-mix(in srgb,var(--plan) 45%,transparent)}
+.bar .r{background:var(--real);height:4px;top:2px}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.state{border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center}
+.state b{display:block;font-family:var(--f-display);font-size:1.6rem}
+.alert{border-radius:6px;padding:10px 12px;font-weight:600}
+.alert.bad{background:var(--warn-bg);color:var(--delay)}
+.alert.ok{background:var(--ok-bg);color:var(--ahead)}
+.alert.neutral{background:var(--surface-2);color:var(--ink-2);font-weight:500}
+
+/* formularios */
+label.fld{display:grid;gap:4px;font-size:.85rem;color:var(--ink-2);font-weight:600}
+input.in,select.in,textarea.in{background:var(--input);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0;width:100%}
+input.in.calc{background:var(--surface-2)}
+textarea.in{min-height:120px;font-family:var(--f-data);font-size:.85rem}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+td input.in,td select.in{padding:5px 6px}
+td input.pct{width:72px;text-align:right}
+td input.hh{width:80px;text-align:right}
+td input.dt{width:140px}
+.req{display:grid;gap:8px;counter-reset:r}
+.req li{list-style:none;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start}
+.req li::before{counter-increment:r;content:counter(r);font-family:var(--f-display);font-weight:700;background:var(--ink);color:var(--bg);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:.9rem}
+.req .ok{color:var(--ahead);font-weight:700}
+.req .no{color:var(--delay);font-weight:700}
+.cuts{display:flex;flex-wrap:wrap;gap:6px}
+.cut{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-family:var(--f-data);font-size:.85rem}
+.cut[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:20;font-weight:600;max-width:calc(100% - 32px)}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--warn-bg);border-radius:6px;padding:8px 10px}
+.empty{text-align:center;padding:40px 16px;display:grid;gap:12px;justify-items:center}
+.empty p{max-width:56ch;margin:0}
+.issues{margin:0;padding-left:18px;color:var(--delay);font-size:.9rem}
+.selectwrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media (max-width:560px){.kpi .v{font-size:1.5rem}.states{grid-template-columns:repeat(2,1fr)}.hb{display:none}.top .wrap{gap:8px 12px}.top{position:static}.projsel label{display:none}th,td{padding:6px 4px}table{font-size:.85rem}.card{padding:12px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="logo"><img src="data:image/png;base64,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" alt="Ecopreneur"></span><span class="ttl">Curva S</span></div>
+    <div class="projsel">
+      <label for="proj" class="small" style="white-space:nowrap">Proyecto</label>
+      <select id="proj"></select>
+      <button class="btn-ghost-top" id="newProjBtn" type="button">+ Nuevo</button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Secciones">
+      <button class="tab" role="tab" data-v="informe" id="t-informe">Informe</button>
+      <button class="tab" role="tab" data-v="avance" id="t-avance">Avance semanal</button>
+      <button class="tab" role="tab" data-v="actividades" id="t-actividades">Actividades</button>
+      <button class="tab" role="tab" data-v="config" id="t-config">Proyecto</button>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+'use strict';
+const DAY = 864e5;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const toN = s => { if (!s) return NaN; const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d) / DAY; };
+const toISO = n => new Date(Math.round(n) * DAY).toISOString().slice(0, 10);
+const fD = n => { if (!isFinite(n)) return '—'; const d = new Date(Math.round(n) * DAY); return pad(d.getUTCDate()) + '-' + pad(d.getUTCMonth() + 1) + '-' + d.getUTCFullYear(); };
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const nf = (x, d = 1) => isFinite(x) ? x.toLocaleString('es-CL', {minimumFractionDigits: d, maximumFractionDigits: d}) : '—';
+const pct = (x, d = 1) => isFinite(x) ? nf(x * 100, d) + '%' : '—';
+const pts = x => isFinite(x) ? (x > 0 ? '+' : x < 0 ? '−' : '') + nf(Math.abs(x * 100), 1) + ' pts' : '—';
+const sgn = (x, d = 1, u = '') => isFinite(x) ? (x > 0 ? '+' : x < 0 ? '−' : '') + nf(Math.abs(x), d) + u : '—';
+const money = x => isFinite(x) ? '$ ' + Math.round(x).toLocaleString('es-CL') : '—';
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const PERFILES = ['S', 'Lineal', 'Inicio', 'Final'];
+const F = (x, p) => p === 'Lineal' ? x : p === 'Inicio' ? 1 - (1 - x) ** 2 : p === 'Final' ? x * x : 3 * x * x - 2 * x * x * x;
+const uid = () => Math.random().toString(36).slice(2, 9);
+
+/* ---------- estado ---------- */
+let db = null, coll = null, readOnly = false, local = false;
+const LKEY = 'cs.proyectos';
+const lread = () => { try { return JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch (e) { return null; } };
+const lwrite = o => { localStorage.setItem(LKEY, JSON.stringify(o)); };
+const wantRO = /[?&](lectura|ver)\b/.test(location.search);
+const S = { projects: {}, order: [], cur: null, view: 'informe', cutSel: null, draft: null, dirty: false, loading: true, offline: false, confirm: null, editCut: null };
+try { const v = localStorage.getItem('cs.view'); if (v) S.view = v; const p = localStorage.getItem('cs.proj'); if (p) S.cur = p; } catch (e) {}
+const views = ['informe', 'avance', 'actividades', 'config'];
+if (location.hash && views.includes(location.hash.slice(1))) S.view = location.hash.slice(1);
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2600); }
+const P = () => S.dirty && S.draft ? S.draft : S.projects[S.cur];
+function startEdit() { if (!S.dirty) { S.draft = structuredClone(S.projects[S.cur]); S.dirty = true; } return S.draft; }
+
+/* ---------- parsing de pegado ---------- */
+function parseDate(s) {
+  s = String(s || '').trim().replace(/^[a-záéíóúñ]{2,4}\.?\s+/i, '');
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); if (m) return `${m[1]}-${pad(m[2])}-${pad(m[3])}`;
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/);
+  if (m) { let y = +m[3]; if (y < 100) y += 2000; return `${y}-${pad(m[2])}-${pad(m[1])}`; }
+  return '';
+}
+function parseNum(s) {
+  s = String(s ?? '').replace(/hrs?|h|%|\s/gi, '');
+  if (!s) return NaN;
+  if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '').replace(',', '.');
+  else s = s.replace(',', '.');
+  return parseFloat(s);
+}
+
+/* ---------- modelo (mismo cálculo que el Excel v3) ---------- */
+function compute(p, cutIdx) {
+  const acts = (p.actividades || []).map(a => ({...a, s: toN(a.ini), e: toN(a.fin) + 1, hh: +a.hh || 0}))
+    .filter(a => a.nombre && isFinite(a.s) && isFinite(a.e) && a.e > a.s && a.hh > 0);
+  const tot = acts.reduce((t, a) => t + a.hh, 0);
+  if (!acts.length || !tot) return null;
+  acts.forEach(a => a.w = a.hh / tot);
+  const xa = (a, d) => clamp((d - a.s) / (a.e - a.s), 0, 1);
+  const planA = (a, d) => F(xa(a, d), a.perfil);
+  const plan = d => acts.reduce((t, a) => t + a.w * planA(a, d), 0);
+  const start = isFinite(toN(p.inicio)) ? toN(p.inicio) : Math.min(...acts.map(a => a.s));
+  const endEx = Math.max(...acts.map(a => a.e));
+  const finProg = endEx - 1;
+  const per = +p.periodo || 7;
+  const cortes = (p.cortes || []).filter(c => isFinite(toN(c.fecha))).sort((a, b) => toN(a.fecha) - toN(b.fecha));
+  const realOf = c => acts.reduce((t, a) => t + a.w * clamp((+(c.avance || {})[a.id] || 0) / 100, 0, 1), 0);
+  const fases = [...new Set(acts.map(a => a.fase || 'Sin fase'))];
+  const base = {acts, tot, plan, planA, start, endEx, finProg, per, cortes, fases};
+  if (!cortes.length) return {...base, hasCut: false};
+  const ci = cutIdx == null || cutIdx >= cortes.length ? cortes.length - 1 : cutIdx;
+  const C = cortes[ci], cut = toN(C.fecha);
+  const prog = plan(cut), real = realOf(C);
+  // Earned Schedule: fecha en que el plan alcanza el % real (bisección, el plan es no decreciente)
+  let ESd;
+  if (real <= 0) ESd = start;
+  else if (real >= plan(endEx) - 1e-9) ESd = finProg;
+  else { let lo = start, hi = endEx; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; plan(m) < real ? lo = m : hi = m; } ESd = (lo + hi) / 2; }
+  const AT = cut - start, ES = ESd - start, PD = finProg - start;
+  const SPIt = AT > 0 ? Math.max(0.2, ES / AT) : 1;
+  const IEAC = PD / SPIt, finProy = start + Math.round(IEAC);
+  const proj = d => plan(start + (d - start) * SPIt);
+  const actRows = acts.map(a => {
+    const pa = planA(a, cut), ra = clamp((+(C.avance || {})[a.id] || 0) / 100, 0, 1);
+    const st = ra >= 1 ? 'Terminada' : ra < pa - 0.005 ? 'Atrasada' : ra > pa + 0.005 ? 'Adelantada' : 'Al día';
+    return {...a, pa, ra, imp: a.w * (ra - pa), st};
+  });
+  const faseRows = fases.map(f => {
+    const rs = actRows.filter(a => (a.fase || 'Sin fase') === f); const w = rs.reduce((t, a) => t + a.w, 0);
+    return {f, w, hh: rs.reduce((t, a) => t + a.hh, 0), p: rs.reduce((t, a) => t + a.w * a.pa, 0) / w, r: rs.reduce((t, a) => t + a.w * a.ra, 0) / w, n: rs.length};
+  });
+  // estados de pago: último EP cargado hasta el corte
+  let ep = null;
+  for (let i = ci; i >= 0; i--) { const v = cortes[i].ep; if (v !== '' && v != null && isFinite(+v)) { const c = cortes[i]; ep = {fecha: toN(c.fecha), ep: +v / 100, real: realOf(c), prog: plan(toN(c.fecha))}; break; } }
+  const realPts = cortes.slice(0, ci + 1).map(c => ({d: toN(c.fecha), v: realOf(c), ep: (c.ep !== '' && c.ep != null && isFinite(+c.ep)) ? +c.ep / 100 : null}));
+  return {...base, hasCut: true, ci, C, cut, prog, real, ESd, AT, ES, PD, SPIt, IEAC, finProy, proj, actRows, faseRows, ep, realPts, realOf,
+    spi: prog > 0 ? real / prog : 1, dev: real - prog, svt: (ES - AT) / 7, tvac: (PD - IEAC) / 7};
+}
+
+/* ---------- vistas ---------- */
+function render() {
+  if (readOnly && S.view !== 'informe') S.view = 'informe';
+  document.querySelectorAll('.tab').forEach(t => { t.setAttribute('aria-selected', String(t.dataset.v === S.view)); t.hidden = readOnly && t.dataset.v !== 'informe'; });
+  $('#newProjBtn').hidden = readOnly;
+  const sel = $('#proj');
+  sel.innerHTML = S.order.length ? S.order.map(id => `<option value="${esc(id)}"${id === S.cur ? ' selected' : ''}>${esc(S.projects[id].nombre || 'Sin nombre')}</option>`).join('') : '<option>Sin proyectos</option>';
+  sel.disabled = !S.order.length;
+  const m = $('#main');
+  if (S.newProj) { m.innerHTML = viewNew(); bindNew(); return; }
+  if (S.loading) { m.innerHTML = `<div class="card empty"><h2>Cargando proyectos…</h2><p class="muted">Leyendo los datos guardados.</p></div>`; return; }
+  if (!S.order.length) { m.innerHTML = viewEmpty(); $('#emptyNew')?.addEventListener('click', () => { S.newProj = true; render(); }); return; }
+  const p = P();
+  if (S.view === 'informe') { m.innerHTML = viewInforme(p); bindInforme(); }
+  else if (S.view === 'avance') { m.innerHTML = viewAvance(p); bindAvance(); }
+  else if (S.view === 'actividades') { m.innerHTML = viewActs(p); bindActs(); }
+  else { m.innerHTML = viewConfig(p); bindConfig(); }
+}
+
+function minimos(p) {
+  const acts = (p.actividades || []);
+  const okActs = acts.filter(a => a.nombre && parseDate(a.ini) && parseDate(a.fin) && +a.hh > 0).length;
+  return [
+    {t: 'Nombre del proyecto y fecha de inicio de la curva', ok: !!(p.nombre && p.inicio), d: p.inicio ? 'Inicio ' + fD(toN(p.inicio)) : 'Falta la fecha de inicio', v: 'config'},
+    {t: 'Actividades con fase, inicio, fin y HH', ok: okActs > 0, d: `${okActs} de ${acts.length} actividades completas`, v: 'actividades'},
+    {t: 'Corte semanal: fecha y % completado de cada actividad', ok: (p.cortes || []).length > 0, d: `${(p.cortes || []).length} cortes cargados`, v: 'avance'},
+    {t: 'Opcional: % que cobra el contratista en cada estado de pago', ok: (p.cortes || []).some(c => c.ep !== '' && c.ep != null), d: 'Activa el control de estados de pago', v: 'avance', opt: true},
+  ];
+}
+function reqList(p) {
+  return `<ol class="req">${minimos(p).map(r => `<li><div><b>${esc(r.t)}</b> <span class="${r.ok ? 'ok' : r.opt ? 'muted' : 'no'}">${r.ok ? '✓' : r.opt ? '·' : 'Falta'}</span><div class="note">${esc(r.d)} · <a href="#${r.v}" data-go="${r.v}">Ir a cargar</a></div></div></li>`).join('')}</ol>`;
+}
+
+function viewEmpty() {
+  return `<div class="card empty"><h2>Crea tu primer proyecto</h2>
+  <p class="muted">Con cuatro datos la app arma la curva S, el atraso en puntos y en semanas, el término proyectado y el control de estados de pago: nombre e inicio del proyecto, las actividades con sus HH, y cada semana el % completado.</p>
+  ${S.offline ? '<p class="alert neutral">No se pudo conectar al almacenamiento. Puedes trabajar igual, pero los datos no se guardarán al cerrar.</p>' : ''}
+  <button class="btn primary" id="emptyNew" type="button">Crear proyecto</button></div>`;
+}
+
+function viewNew() {
+  return `<div class="card" style="max-width:620px;justify-self:center;width:100%;display:grid;gap:14px">
+    <h2>Nuevo proyecto</h2>
+    <div class="formgrid">
+      <label class="fld" for="np-nombre">Nombre del proyecto<input class="in" id="np-nombre" placeholder="Ej: Ampliación PTAR …"></label>
+      <label class="fld" for="np-inicio">Inicio de la curva<input class="in" type="date" id="np-inicio"></label>
+      <label class="fld" for="np-cliente">Cliente<input class="in" id="np-cliente"></label>
+      <label class="fld" for="np-contratista">Contratista<input class="in" id="np-contratista"></label>
+    </div>
+    <p class="note">Después cargas las actividades (puedes pegarlas desde Excel o Project) y el avance de cada semana.</p>
+    <div class="row"><button class="btn primary" id="np-ok" type="button">Crear</button><button class="btn" id="np-cancel" type="button">Cancelar</button></div>
+  </div>`;
+}
+function bindNew() {
+  $('#np-cancel').onclick = () => { S.newProj = false; render(); };
+  $('#np-ok').onclick = async () => {
+    const nombre = $('#np-nombre').value.trim(); if (!nombre) { toast('Escribe un nombre para el proyecto'); return; }
+    const id = nombre.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '-' + uid();
+    const p = {nombre, cliente: $('#np-cliente').value.trim(), contratista: $('#np-contratista').value.trim(), empresa: 'ECOPRENEUR',
+      inicio: $('#np-inicio').value || '', periodo: 7, monto: '', actividades: [], cortes: [], creado: new Date().toISOString()};
+    S.projects[id] = p; if (!S.order.includes(id)) S.order.push(id); S.cur = id; S.newProj = false; S.view = 'actividades';
+    await save(p, id); render();
+  };
+}
+
+/* ----- informe ----- */
+function viewInforme(p) {
+  const M = compute(p, S.cutSel);
+  const head = `<div class="rephead"><div><h3>Curva S de avance físico</h3><h1>${esc(p.nombre)}</h1>
+    <div class="meta">${[p.cliente && 'Cliente: ' + esc(p.cliente), p.contratista && 'Contratista: ' + esc(p.contratista), p.empresa && 'Control: ' + esc(p.empresa)].filter(Boolean).join(' · ')}</div></div>`;
+  if (!M || !M.hasCut) {
+    return `<div class="card" style="display:grid;gap:14px">${head}</div></div>
+    <div class="card" style="display:grid;gap:12px"><h2>Faltan datos para el informe</h2><p class="muted">Completa lo mínimo y el informe aparece solo.</p>${reqList(p)}</div>`;
+  }
+  const late = M.svt < -0.05, ahead = M.svt > 0.05;
+  const status = late ? `<span class="chip late">▼ Atraso de ${nf(-M.svt * 7, 0)} días</span>` : ahead ? `<span class="chip ahead">▲ Adelanto de ${nf(M.svt * 7, 0)} días</span>` : `<span class="chip ok">● Al día</span>`;
+  const cutSel = `<div class="selectwrap"><label class="small muted" for="cutSel">Fecha de corte</label><select class="in" id="cutSel" style="width:auto">${M.cortes.map((c, i) => `<option value="${i}"${i === M.ci ? ' selected' : ''}>${fD(toN(c.fecha))}</option>`).join('')}</select>${status}</div>`;
+  const k = (l, v, s, cls = '') => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
+  const kpis = `<div class="kpis">
+    ${k('% Planeado', pct(M.prog), 'según línea base')}
+    ${k('% Real', pct(M.real), 'completado ponderado por HH')}
+    ${k('Atraso en avance', pts(M.dev), 'real − planeado', M.dev < -0.0005 ? 'bad' : M.dev > 0.0005 ? 'good' : '')}
+    ${k('SPI', nf(M.spi, 2), M.spi < 0.995 ? 'bajo 1: vamos lentos' : M.spi > 1.005 ? 'sobre 1: adelantados' : 'en plazo', M.spi < 0.995 ? 'bad' : M.spi > 1.005 ? 'good' : '')}
+    ${k('Atraso en tiempo', sgn(M.svt, 1, ' sem'), (M.svt < 0 ? nf(-M.svt * 7, 0) + ' días detrás' : nf(M.svt * 7, 0) + ' días adelante'), late ? 'bad' : ahead ? 'good' : '')}
+    ${k('Término programado', fD(M.finProg), 'línea base', 'date')}
+    ${k('Término proyectado', fD(M.finProy), M.finProy > M.finProg ? nf(M.finProy - M.finProg, 0) + ' días tarde al ritmo actual' : 'en plazo al ritmo actual', M.finProy > M.finProg + 0.5 ? 'bad date' : 'date')}
+  </div>`;
+  const chart = `<div class="card chartcard"><h2>Planeado vs real</h2><p class="note">Vertical: cuánto avance falta. Horizontal: cuántas semanas vamos detrás.</p>${svgCurve(M)}
+    <div class="legend"><span><i style="border-color:var(--plan)"></i>Planeado (línea base)</span><span><i style="border-color:var(--real)"></i>Real</span><span><i class="d" style="border-color:var(--real)"></i>Proyección al ritmo actual</span><span><i class="m"></i>Estado de pago (contratista)</span></div></div>`;
+  const esRows = [
+    ['Duración planificada (PD)', 'Fin línea base − inicio', nf(M.PD / 7) + ' sem', 'Duración total del programa'],
+    ['Tiempo real (AT)', 'Corte − inicio', nf(M.AT / 7) + ' sem', 'Tiempo transcurrido al corte'],
+    ['Earned Schedule (ES)', 'Fecha en que el plan tenía el % real', nf(M.ES / 7) + ' sem', 'Equivale al plan del ' + fD(M.ESd)],
+    ['SV(t)', 'ES − AT', sgn(M.svt, 1, ' sem'), M.svt < -0.05 ? `Atraso de ${nf(-M.svt * 7, 0)} días` : M.svt > 0.05 ? `Adelanto de ${nf(M.svt * 7, 0)} días` : 'Al día'],
+    ['SPI(t)', 'ES / AT', nf(M.SPIt, 2), M.SPIt < 0.995 ? `Avanzamos al ${nf(M.SPIt * 100, 0)}% del ritmo planificado` : 'En el ritmo planificado o mejor'],
+    ['IEAC(t)', 'PD / SPI(t)', nf(M.IEAC / 7) + ' sem', 'Duración total al ritmo actual'],
+    ['ETC(t)', 'IEAC(t) − AT', nf((M.IEAC - M.AT) / 7) + ' sem', 'Tiempo que falta para terminar'],
+    ['TVAC', 'PD − IEAC(t)', sgn(M.tvac, 1, ' sem'), M.tvac < -0.05 ? `Terminaríamos ${nf(-M.tvac * 7, 0)} días tarde` : M.tvac > 0.05 ? `Terminaríamos ${nf(M.tvac * 7, 0)} días antes` : 'Terminamos en plazo'],
+  ];
+  const es = `<div class="card"><h3>Plazo · Earned Schedule</h3><div class="tw"><table><thead><tr><th>Indicador</th><th class="n">Valor</th><th>Lectura</th></tr></thead><tbody>
+    ${esRows.map(r => `<tr><td><b>${r[0]}</b><div class="f">${r[1]}</div></td><td class="n">${r[2]}</td><td class="small">${esc(r[3])}</td></tr>`).join('')}</tbody></table></div></div>`;
+  let epHtml;
+  if (!M.ep) epHtml = `<div class="alert neutral">Carga el % que cobra el contratista en el corte del estado de pago (pestaña Avance semanal) y aquí verás si cobra más de lo ejecutado.</div>`;
+  else {
+    const d = M.ep.ep - M.ep.real, monto = +p.monto;
+    const al = d > 0.005 ? `<div class="alert bad">⚠ Cobra ${pts(d).replace('+', '')} más de lo ejecutado: revisar o retener</div>` : d < -0.005 ? `<div class="alert ok">Cobra menos de lo ejecutado (${pts(d)})</div>` : `<div class="alert ok">Cobro coherente con el avance real</div>`;
+    epHtml = `${al}<div class="tw"><table><tbody>
+      <tr><td>Último estado de pago</td><td class="n">${fD(M.ep.fecha)}</td></tr>
+      <tr><td>% cobrado por el contratista</td><td class="n">${pct(M.ep.ep)}</td></tr>
+      <tr><td>% real verificado a esa fecha</td><td class="n">${pct(M.ep.real)}</td></tr>
+      <tr><td>% programado a esa fecha</td><td class="n">${pct(M.ep.prog)}</td></tr>
+      <tr><td><b>EP − real</b></td><td class="n ${d > 0.005 ? 'bad' : ''}"><b>${pts(d)}</b></td></tr>
+      <tr><td>EP − programado</td><td class="n">${pts(M.ep.ep - M.ep.prog)}</td></tr>
+      ${monto > 0 ? `<tr><td>Monto cobrado</td><td class="n">${money(M.ep.ep * monto)}</td></tr><tr><td>Monto respaldado por avance real</td><td class="n">${money(M.ep.real * monto)}</td></tr><tr><td><b>Diferencia a revisar</b></td><td class="n ${d > 0 ? 'bad' : ''}"><b>${money(d * monto)}</b></td></tr><tr><td>Saldo por cobrar</td><td class="n">${money((1 - M.ep.ep) * monto)}</td></tr>` : ''}
+    </tbody></table></div>`;
+  }
+  const epCard = `<div class="card" style="display:grid;gap:10px"><h3>Control de estados de pago</h3>${epHtml}</div>`;
+  const fase = `<div class="card"><h3>Avance por fase</h3><div class="tw"><table><thead><tr><th>Fase</th><th class="n">Peso</th><th class="hb">Planeado / real</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Desvío</th></tr></thead><tbody>
+    ${M.faseRows.map(f => `<tr><td>${esc(f.f)}<div class="f">${f.n} act. · ${f.hh.toLocaleString('es-CL')} HH</div></td><td class="n">${pct(f.w, 0)}</td><td class="hb"><div class="bar" title="Planeado ${pct(f.p)} · Real ${pct(f.r)}"><span class="p" style="width:${f.p * 100}%"></span><span class="r" style="width:${f.r * 100}%"></span></div></td><td class="n">${pct(f.p, 0)}</td><td class="n">${pct(f.r, 0)}</td><td class="n ${f.r - f.p < -0.0005 ? 'bad' : f.r - f.p > 0.0005 ? 'good' : ''}">${pts(f.r - f.p)}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  const top = M.actRows.filter(a => a.imp < -0.00005).sort((a, b) => a.imp - b.imp).slice(0, 10);
+  const topCard = `<div class="card"><h3>Las 10 actividades que más atrasan</h3>${top.length ? `<div class="tw"><table><thead><tr><th>Actividad</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Impacto</th></tr></thead><tbody>
+    ${top.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh} HH</div></td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
+    </tbody></table></div><p class="note">Impacto: puntos del avance total que cada actividad le resta al proyecto.</p>` : '<p class="muted">Ninguna actividad está bajo su programa.</p>'}</div>`;
+  const cnt = s => M.actRows.filter(a => a.st === s).length;
+  const states = `<div class="card"><h3>Estado de actividades</h3><div class="states" style="margin-top:8px">
+    <div class="state"><b>${cnt('Terminada')}</b>Terminadas</div><div class="state"><b class="good">${cnt('Adelantada')}</b>Adelantadas</div>
+    <div class="state"><b>${cnt('Al día')}</b>Al día</div><div class="state"><b class="bad">${cnt('Atrasada')}</b>Atrasadas</div></div></div>`;
+  const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
+  const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} HH</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} HH</span></div>`;
+  return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
+    <div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}${states}</div></div>${exp}`;
+}
+
+function svgCurve(M) {
+  const nar = innerWidth < 640, W = nar ? 520 : 900, H = nar ? 400 : 440, L = 46, R = 14, T = 20, B = 40;
+  const x0 = M.start, x1 = Math.max(M.endEx, M.finProy + 4) + 2;
+  const X = d => L + (d - x0) / (x1 - x0) * (W - L - R), Y = v => T + (1 - v) * (H - T - B);
+  let g = '';
+  for (let v = 0; v <= 1.0001; v += 0.2) g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`;
+  const d0 = new Date(x0 * DAY); let mm = Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 1) / DAY; const span = x1 - x0; const stepM = span > 400 ? 3 : span > 200 ? 2 : 1;
+  for (let i = 0; mm < x1; i++) { const dd = new Date(mm * DAY); if (i % stepM === 0) g += `<line class="grid" x1="${X(mm)}" x2="${X(mm)}" y1="${T}" y2="${H - B}"/><text x="${X(mm)}" y="${H - B + 18}" text-anchor="middle">${MES[dd.getUTCMonth()]} ${String(dd.getUTCFullYear()).slice(2)}</text>`; mm = Date.UTC(dd.getUTCFullYear(), dd.getUTCMonth() + 1, 1) / DAY; }
+  g += `<line class="axis" x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}"/><line class="axis" x1="${L}" x2="${L}" y1="${T}" y2="${Y(0)}"/>`;
+  const step = Math.max(1, Math.round((x1 - x0) / 300));
+  let pp = []; for (let d = x0; d <= x1; d += step) pp.push(`${X(d).toFixed(1)},${Y(M.plan(d)).toFixed(1)}`);
+  const rp = [...(M.realPts[0] && M.realPts[0].d > x0 ? [{d: x0, v: 0}] : []), ...M.realPts];
+  let pj = []; for (let d = M.cut; d <= x1; d += step) { const v = M.proj(d); pj.push(`${X(d).toFixed(1)},${Y(v).toFixed(1)}`); if (v >= 0.9995) break; }
+  const good = M.dev > 0;
+  let ann = `<line class="today" x1="${X(M.cut)}" x2="${X(M.cut)}" y1="${T}" y2="${Y(0)}"/><text x="${X(M.cut) + 6}" y="${Y(0) - 8}">Hoy · ${fD(M.cut).slice(0, 5)}</text>`;
+  if (Math.abs(M.dev) > 0.004) {
+    const yA = Y(M.real), yB = Y(M.prog), cls = good ? ' good' : '';
+    ann += `<line class="arrow${cls}" x1="${X(M.cut)}" x2="${X(M.cut)}" y1="${yA + (good ? 6 : -6)}" y2="${yB + (good ? -6 : 6)}" marker-start="url(#ah${good ? 'g' : 'b'})" marker-end="url(#ah${good ? 'g' : 'b'})"/>`;
+    ann += `<text class="lbl${cls}" x="${X(M.cut) + 12}" y="${(yA + yB) / 2 - 4}">${good ? 'Adelanto' : 'Atraso'} en avance</text><text class="lbl${cls}" x="${X(M.cut) + 12}" y="${(yA + yB) / 2 + 12}">${nf(Math.abs(M.dev) * 100)} puntos</text>`;
+  }
+  if (Math.abs(M.svt) > 0.05 && isFinite(M.ESd)) {
+    const yR = Y(M.real), xa = X(Math.min(M.ESd, M.cut)), xb = X(Math.max(M.ESd, M.cut)), cls = M.svt > 0 ? ' good' : '';
+    if (xb - xa > 14) ann += `<line class="arrow${cls}" x1="${xa + 5}" x2="${xb - 5}" y1="${yR}" y2="${yR}" marker-start="url(#ah${cls ? 'g' : 'b'})" marker-end="url(#ah${cls ? 'g' : 'b'})"/>`;
+    const tx = xa - 8 - 130 < L ? (xa + xb) / 2 : xa - 8, ta = tx === xa - 8 ? 'end' : 'middle', ty = ta === 'end' ? yR + 4 : yR + 22;
+    ann += `<text class="lbl${cls}" x="${tx}" y="${ty}" text-anchor="${ta}">${M.svt < 0 ? 'Atraso' : 'Adelanto'} en tiempo</text><text class="lbl${cls}" x="${tx}" y="${ty + 16}" text-anchor="${ta}">≈${nf(Math.abs(M.svt))} semanas</text>`;
+  }
+  const eps = M.realPts.filter(r => r.ep != null).map(r => `<rect class="epm" x="${X(r.d) - 6}" y="${Y(r.ep) - 6}" width="12" height="12" transform="rotate(45 ${X(r.d)} ${Y(r.ep)})"><title>EP ${fD(r.d)}: ${pct(r.ep)}</title></rect>`).join('');
+  const dots = M.realPts.map(r => `<circle class="dotbg" cx="${X(r.d)}" cy="${Y(r.v)}" r="5.5"/><circle class="dot" cx="${X(r.d)}" cy="${Y(r.v)}" r="3.5"><title>Real ${fD(r.d)}: ${pct(r.v)}</title></circle>`).join('');
+  const spi = `<text class="spi" x="${L + 18}" y="${T + 40}">SPI = ${nf(M.spi, 2)}</text><text class="spis" x="${L + 18}" y="${T + 62}">avance real / avance planeado</text><text class="spis" x="${L + 18}" y="${T + 78}">${M.spi < 0.995 ? 'por debajo de 1, vamos lentos' : M.spi > 1.005 ? 'sobre 1, vamos adelantados' : 'igual a 1, en plazo'}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva S planeada ${pct(M.prog)} y real ${pct(M.real)} al ${fD(M.cut)}">
+    <defs><marker id="ahb" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahd" d="M0,0 L10,5 L0,10 z"/></marker>
+    <marker id="ahg" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahd good" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    ${g}${spi}<polyline class="plan" points="${pp.join(' ')}"/><polyline class="proj" points="${pj.join(' ')}"/><polyline class="real" points="${rp.map(r => `${X(r.d).toFixed(1)},${Y(r.v).toFixed(1)}`).join(' ')}"/>${ann}${dots}${eps}</svg>`;
+}
+
+function weeks(M) {
+  const out = []; const lim = Math.max(M.endEx, M.hasCut ? M.finProy : 0) + M.per;
+  for (let d = M.start, k = 0; d <= lim; d += M.per, k++) out.push({k, d});
+  return out;
+}
+function svgBars(M) {
+  const ws = weeks(M), W = innerWidth < 640 ? 520 : 900, H = 220, L = 46, R = 12, T = 12, B = 34;
+  const incP = ws.map((w, i) => i ? M.plan(w.d) - M.plan(ws[i - 1].d) : M.plan(w.d));
+  const incR = ws.map(() => null);
+  let prevV = 0, prevI = -1;
+  M.realPts.forEach((r, k) => { let i = ws.findIndex(w => w.d >= r.d); if (i < 0) i = ws.length - 1; const span = i - prevI; if (k === 0 && i > 0) { prevV = r.v; prevI = i; return; } const inc = (r.v - prevV) / Math.max(1, span); for (let j = Math.max(0, prevI + 1); j <= i; j++) incR[j] = (incR[j] || 0) + inc; prevV = r.v; prevI = i; });
+  const mx = Math.max(0.01, ...incP, ...incR.filter(v => v != null)) * 1.1;
+  const bw = (W - L - R) / ws.length, X = i => L + i * bw, Y = v => T + (1 - v / mx) * (H - T - B);
+  let g = '';
+  const tick = mx > 0.2 ? 0.05 : mx > 0.08 ? 0.02 : 0.01;
+  for (let v = 0; v <= mx; v += tick) g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${Math.round(v * 100)}%</text>`;
+  const every = Math.ceil(ws.length / (W < 600 ? 7 : 14));
+  ws.forEach((w, i) => {
+    g += `<rect class="bp" x="${X(i) + bw * 0.12}" y="${Y(Math.max(0, incP[i]))}" width="${bw * 0.38}" height="${Y(0) - Y(Math.max(0, incP[i]))}"><title>${fD(w.d)} planeado ${pct(incP[i])}</title></rect>`;
+    if (incR[i] != null) g += `<rect class="br" x="${X(i) + bw * 0.5}" y="${Y(Math.max(0, incR[i]))}" width="${bw * 0.38}" height="${Y(0) - Y(Math.max(0, incR[i]))}"><title>${fD(w.d)} real ${pct(incR[i])}</title></rect>`;
+    if (i % every === 0) g += `<text x="${X(i) + bw / 2}" y="${H - B + 16}" text-anchor="middle">${fD(w.d).slice(0, 5)}</text>`;
+  });
+  g += `<line class="axis" x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Avance semanal planeado y real">${g}</svg>`;
+}
+
+function bindInforme() {
+  $('#cutSel')?.addEventListener('change', e => { S.cutSel = +e.target.value; render(); });
+  $('#expCsv')?.addEventListener('click', exportCsv);
+  bindGo();
+}
+function bindGo() { document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.go); })); }
+
+async function exportCsv() {
+  const p = P(), M = compute(p, S.cutSel); if (!M) return;
+  const rows = [['Semana', 'Fecha', '% Planeado acum.', '% Real acum.', '% Proyección', '% EP contratista']];
+  const realAt = d => { const r = M.realPts.find(x => x.d === d); return r ? r : null; };
+  weeks(M).forEach(w => {
+    const r = M.hasCut ? M.realPts.filter(x => x.d <= w.d && x.d > w.d - M.per).pop() : null;
+    rows.push([w.k, fD(w.d), nf(M.plan(w.d) * 100, 2), r ? nf(r.v * 100, 2) : '', M.hasCut && w.d >= M.cut ? nf(M.proj(w.d) * 100, 2) : '', r && r.ep != null ? nf(r.ep * 100, 2) : '']);
+  });
+  rows.push([]); rows.push(['Actividad', 'Fase', 'Inicio', 'Fin', 'HH', 'Peso %', '% Prog. al corte', '% Real al corte', 'Impacto (pts)', 'Estado']);
+  (M.actRows || []).forEach(a => rows.push([a.nombre, a.fase || '', fD(a.s), fD(a.e - 1), a.hh, nf(a.w * 100, 2), nf(a.pa * 100, 1), nf(a.ra * 100, 1), nf(a.imp * 100, 2), a.st]));
+  const csv = '﻿' + rows.map(r => r.map(v => { v = String(v ?? ''); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';')).join('\r\n');
+  await saveFile(`Curva_S_${(p.nombre || 'proyecto').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w-]+/g, '_').slice(0, 40)}_${M.hasCut ? fD(M.cut) : 'plan'}.csv`, csv, 'text/csv');
+}
+async function saveFile(filename, data, type) {
+  try {
+    const dl = window.claude ? await window.claude.use?.('downloads') : null;
+    if (dl) { await dl.save({filename, data}); return; }
+    const url = URL.createObjectURL(new Blob([data], {type: type + ';charset=utf-8'}));
+    const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  } catch (e) { if (e?.code !== 'cancelled') toast('No se pudo descargar el archivo'); }
+}
+function allData() { const o = {}; S.order.forEach(id => o[id] = S.projects[id]); return {app: 'curva-s-ecopreneur', version: 1, exportado: new Date().toISOString(), proyectos: o}; }
+async function backup() { await saveFile('datos.json', JSON.stringify(allData(), null, 1), 'application/json'); toast('Respaldo descargado: datos.json'); }
+function loadInto(obj) {
+  const pr = obj && (obj.proyectos || obj); if (!pr || typeof pr !== 'object') return false;
+  const ids = Object.keys(pr).filter(id => pr[id] && Array.isArray(pr[id].actividades)); if (!ids.length) return false;
+  S.projects = {}; ids.forEach(id => S.projects[id] = pr[id]);
+  S.order = ids.sort((a, b) => (pr[b].actualizado || '').localeCompare(pr[a].actualizado || ''));
+  if (!S.cur || !S.projects[S.cur]) S.cur = S.order[0]; return true;
+}
+
+/* ----- avance semanal ----- */
+function viewAvance(p) {
+  const cortes = (p.cortes || []).map((c, i) => ({c, i})).sort((a, b) => (a.c.fecha || '').localeCompare(b.c.fecha || ''));
+  if (S.editCut == null || !p.cortes?.[S.editCut]) S.editCut = cortes.length ? cortes[cortes.length - 1].i : null;
+  const M = compute(p);
+  const acts = (p.actividades || []);
+  const head = `<div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div><h2>Avance semanal</h2><p class="note">Dato mínimo de cada semana: la fecha de corte y el % completado de cada actividad. El % que cobra el contratista es opcional.</p></div>
+    <div class="row"><button class="btn primary" id="newCut" type="button">+ Nuevo corte</button></div></div>
+    ${cortes.length ? `<div class="cuts" role="group" aria-label="Cortes cargados">${cortes.map(({c, i}) => `<button type="button" class="cut" data-cut="${i}" aria-pressed="${i === S.editCut}">${fD(toN(c.fecha))}${c.ep !== '' && c.ep != null ? ' · EP' : ''}</button>`).join('')}</div>` : '<p class="muted">Todavía no hay cortes. Crea el primero con la fecha del lunes del informe.</p>'}
+    ${S.dirty ? `<div class="row"><button class="btn primary" id="saveAll" type="button">Guardar cambios</button><button class="btn" id="discard" type="button">Descartar</button><span class="note">Hay cambios sin guardar</span></div>` : ''}</div>`;
+  if (S.editCut == null) return head;
+  const c = p.cortes[S.editCut]; const cd = toN(c.fecha);
+  const W = M ? Object.fromEntries(M.acts.map(a => [a.id, a])) : {};
+  const realNow = M && isFinite(cd) ? M.realOf(c) : NaN, progNow = M && isFinite(cd) ? M.plan(cd) : NaN;
+  const confirmDel = S.confirm === 'cut' ? `<div class="confirm"><span>¿Eliminar el corte del ${fD(cd)}?</span><button class="btn danger" id="delCutYes" type="button">Eliminar</button><button class="btn" id="delCutNo" type="button">Cancelar</button></div>` : '';
+  return head + `<div class="card" style="display:grid;gap:14px">
+    <div class="formgrid">
+      <label class="fld" for="cutDate">Fecha de corte<input class="in" type="date" id="cutDate" value="${esc(c.fecha)}"></label>
+      <label class="fld" for="cutEp">% cobrado por el contratista (EP acumulado) · opcional<input class="in" id="cutEp" inputmode="decimal" placeholder="Ej: 52" value="${c.ep ?? ''}"></label>
+      <div class="fld">Resultado de este corte<div class="mono" id="cutRes" style="font-size:1.05rem;padding-top:6px">Real ${pct(realNow)} · Planeado ${pct(progNow)}</div></div>
+    </div>
+    <details><summary class="btn" style="display:inline-block">Pegar % desde Excel o Project</summary>
+      <div style="display:grid;gap:8px;margin-top:10px"><p class="note">Pega una columna con el % completado en el mismo orden de la lista, o dos columnas "Actividad · %" y se asocian por nombre.</p>
+      <textarea class="in" id="pastePct" placeholder="80%&#10;0%&#10;35%"></textarea><div class="row"><button class="btn" id="applyPct" type="button">Aplicar</button></div></div></details>
+    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th class="n">HH</th><th class="n">Prog. a la fecha</th><th class="n">% completado</th></tr></thead><tbody>
+    ${acts.map(a => { const w = W[a.id]; const pa = w && isFinite(cd) ? M.planA(w, cd) : NaN; const v = (c.avance || {})[a.id]; const r = (+v || 0) / 100;
+      return `<tr class="${isFinite(pa) && r < pa - 0.005 ? 'hl' : ''}"><td>${esc(a.nombre)}</td><td class="f">${esc(a.fase || '')}</td><td class="n">${esc(a.hh)}</td><td class="n">${pct(pa, 0)}</td><td class="n"><input class="in pct" data-act="${esc(a.id)}" inputmode="decimal" value="${v ?? ''}" aria-label="% completado ${esc(a.nombre)}"></td></tr>`; }).join('')}
+    </tbody></table></div>
+    <div class="row"><button class="btn primary" id="saveCut" type="button">Guardar corte</button><button class="btn danger" id="delCut" type="button">Eliminar corte</button>${confirmDel}</div>
+    <p class="note">Las filas marcadas van bajo su programa a esa fecha.</p></div>`;
+}
+function bindAvance() {
+  bindSaveBar();
+  document.querySelectorAll('[data-cut]').forEach(b => b.onclick = () => { S.editCut = +b.dataset.cut; S.confirm = null; render(); });
+  $('#newCut')?.addEventListener('click', () => {
+    const d = startEdit(); d.cortes = d.cortes || [];
+    const last = [...d.cortes].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '')).pop();
+    let fecha; if (last) fecha = toISO(toN(last.fecha) + (+d.periodo || 7)); else { const t = new Date(); const n = Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / DAY; fecha = toISO(n - ((new Date(n * DAY).getUTCDay() + 6) % 7)); }
+    d.cortes.push({fecha, ep: '', avance: last ? {...last.avance} : {}});
+    S.editCut = d.cortes.length - 1; render(); toast('Corte creado con los % del corte anterior. Actualiza y guarda.');
+  });
+  const c = () => startEdit().cortes[S.editCut];
+  $('#cutDate')?.addEventListener('change', e => { c().fecha = e.target.value; render(); });
+  $('#cutEp')?.addEventListener('change', e => { const v = e.target.value.trim(); c().ep = v === '' ? '' : parseNum(v); render(); });
+  document.querySelectorAll('input[data-act]').forEach(i => i.addEventListener('change', e => {
+    const v = e.target.value.trim(); const x = c(); x.avance = x.avance || {};
+    if (v === '') delete x.avance[i.dataset.act]; else { const n = clamp(parseNum(v), 0, 100); if (isFinite(n)) { x.avance[i.dataset.act] = n; e.target.value = n; } }
+    const M = compute(S.draft), cd = toN(x.fecha); const r = $('#cutRes'); if (r && M) r.textContent = `Real ${pct(M.realOf(x))} · Planeado ${pct(M.plan(cd))} (sin guardar)`;
+  }));
+  $('#applyPct')?.addEventListener('click', () => {
+    const lines = $('#pastePct').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean); if (!lines.length) return;
+    const x = c(); x.avance = x.avance || {}; const acts = startEdit().actividades; let n = 0;
+    const two = lines.every(l => l.split('\t').length >= 2);
+    if (two) { const norm = s => s.toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, ''); lines.forEach(l => { const parts = l.split('\t'); const v = parseNum(parts[parts.length - 1]); const a = acts.find(a => norm(a.nombre) === norm(parts[0])); if (a && isFinite(v)) { x.avance[a.id] = clamp(v, 0, 100); n++; } }); }
+    else lines.forEach((l, i) => { const v = parseNum(l); if (acts[i] && isFinite(v)) { x.avance[acts[i].id] = clamp(v, 0, 100); n++; } });
+    render(); toast(`${n} actividades actualizadas. Revisa y guarda.`);
+  });
+  $('#saveCut')?.addEventListener('click', commit);
+  $('#delCut')?.addEventListener('click', () => { S.confirm = 'cut'; render(); });
+  $('#delCutNo')?.addEventListener('click', () => { S.confirm = null; render(); });
+  $('#delCutYes')?.addEventListener('click', async () => { const d = startEdit(); d.cortes.splice(S.editCut, 1); S.editCut = null; S.confirm = null; await commit(); });
+}
+function bindSaveBar() { $('#saveAll')?.addEventListener('click', commit); $('#discard')?.addEventListener('click', () => { S.dirty = false; S.draft = null; S.confirm = null; render(); toast('Cambios descartados'); }); }
+
+/* ----- actividades ----- */
+function viewActs(p) {
+  const acts = p.actividades || [];
+  const tot = acts.reduce((t, a) => t + (+a.hh || 0), 0);
+  const fases = [...new Set(acts.map(a => a.fase).filter(Boolean))];
+  const issues = [];
+  acts.forEach(a => { if (!a.nombre) return; if (!parseDate(a.ini) || !parseDate(a.fin)) issues.push(`${a.nombre}: falta inicio o fin`); else if (toN(a.fin) < toN(a.ini)) issues.push(`${a.nombre}: el fin es anterior al inicio`); if (!(+a.hh > 0)) issues.push(`${a.nombre}: sin HH (no pesa en la curva)`); });
+  return `<div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div><h2>Actividades del programa</h2><p class="note">Datos mínimos por actividad: nombre, fase, inicio y fin de la línea base, y HH. El peso de cada actividad sale de sus HH.</p></div>
+    <div class="row"><button class="btn" id="addAct" type="button">+ Agregar actividad</button></div></div>
+    <div class="row" id="saveBar"${S.dirty ? '' : ' hidden'}><button class="btn primary" id="saveAll" type="button">Guardar cambios</button><button class="btn" id="discard" type="button">Descartar</button><span class="note">Hay cambios sin guardar</span></div>
+    <details${acts.length ? '' : ' open'}><summary class="btn" style="display:inline-block">Pegar actividades desde Excel o Project</summary>
+      <div style="display:grid;gap:8px;margin-top:10px"><p class="note">Copia las columnas en este orden: <b>Actividad · Fase · Inicio · Fin · HH</b>. Fechas como 05-10-26, 05-10-2026 o "lun 05-10-26". No incluyas tareas resumen ni hitos de 0 HH.</p>
+      <textarea class="in" id="pasteActs" placeholder="Montaje bombas de lodos DAF&#9;Montaje mecánico&#9;05-10-26&#9;23-10-26&#9;270"></textarea>
+      <div class="row"><button class="btn" id="pasteAdd" type="button">Agregar a la lista</button><button class="btn" id="pasteRep" type="button">Reemplazar la lista</button></div></div></details>
+    ${issues.length ? `<ul class="issues">${issues.slice(0, 8).map(i => `<li>${esc(i)}</li>`).join('')}${issues.length > 8 ? `<li>y ${issues.length - 8} más</li>` : ''}</ul>` : ''}
+    <datalist id="fasesList">${fases.map(f => `<option value="${esc(f)}">`).join('')}</datalist>
+    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th>Inicio</th><th>Fin</th><th class="n">HH</th><th class="n">Peso</th><th>Perfil</th><th></th></tr></thead><tbody>
+    ${acts.map((a, i) => `<tr><td><input class="in" data-i="${i}" data-k="nombre" value="${esc(a.nombre)}" aria-label="Nombre" style="min-width:220px"></td>
+      <td><input class="in" list="fasesList" data-i="${i}" data-k="fase" value="${esc(a.fase)}" aria-label="Fase" style="min-width:150px"></td>
+      <td><input class="in dt" type="date" data-i="${i}" data-k="ini" value="${esc(a.ini)}" aria-label="Inicio"></td>
+      <td><input class="in dt" type="date" data-i="${i}" data-k="fin" value="${esc(a.fin)}" aria-label="Fin"></td>
+      <td class="n"><input class="in hh" data-i="${i}" data-k="hh" inputmode="decimal" value="${esc(a.hh)}" aria-label="HH"></td>
+      <td class="n">${tot ? pct((+a.hh || 0) / tot) : '—'}</td>
+      <td><select class="in" data-i="${i}" data-k="perfil" aria-label="Perfil">${PERFILES.map(x => `<option${(a.perfil || 'S') === x ? ' selected' : ''}>${x}</option>`).join('')}</select></td>
+      <td><button class="btn danger" data-del="${i}" type="button" aria-label="Quitar ${esc(a.nombre)}">×</button></td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="note">${acts.length} actividades · ${tot.toLocaleString('es-CL')} HH. Perfil S = avanza lento, rápido y lento (recomendado). Inicio o Final cargan el avance al comienzo o al cierre.</p></div>`;
+}
+function bindActs() {
+  bindSaveBar();
+  const A = () => startEdit().actividades;
+  document.querySelectorAll('[data-k]').forEach(el => el.addEventListener('change', e => {
+    const a = A()[+el.dataset.i]; const k = el.dataset.k; let v = el.value;
+    if (k === 'hh') { v = parseNum(v) || 0; el.value = v; } a[k] = v; showSave();
+  }));
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { A().splice(+b.dataset.del, 1); render(); });
+  $('#addAct').onclick = () => { const l = A(); const prev = l[l.length - 1]; l.push({id: uid(), nombre: '', fase: prev?.fase || '', ini: '', fin: '', hh: '', perfil: 'S'}); render(); };
+  const doPaste = rep => {
+    const rows = $('#pasteActs').value.split(/\r?\n/).filter(l => l.trim()).map(l => l.split('\t'));
+    const parsed = rows.map(r => ({id: uid(), nombre: (r[0] || '').trim(), fase: (r[1] || '').trim(), ini: parseDate(r[2]), fin: parseDate(r[3]), hh: parseNum(r[4]) || 0, perfil: 'S'})).filter(a => a.nombre && !/^actividad$/i.test(a.nombre));
+    if (!parsed.length) { toast('No encontré filas. Revisa que estén separadas por columnas.'); return; }
+    const d = startEdit(); d.actividades = rep ? parsed : [...(d.actividades || []), ...parsed]; render(); toast(`${parsed.length} actividades cargadas. Revisa y guarda.`);
+  };
+  $('#pasteAdd').onclick = () => doPaste(false); $('#pasteRep').onclick = () => doPaste(true);
+}
+
+/* ----- proyecto ----- */
+function viewConfig(p) {
+  const f = (id, l, v, t = 'text', ph = '') => `<label class="fld" for="${id}">${l}<input class="in" id="${id}" type="${t}" value="${esc(v)}" placeholder="${ph}"></label>`;
+  const confirmDel = S.confirm === 'proj' ? `<div class="confirm"><span>Se borrará el proyecto con todas sus actividades y cortes.</span><button class="btn danger" id="delProjYes" type="button">Eliminar proyecto</button><button class="btn" id="delProjNo" type="button">Cancelar</button></div>` : '';
+  return `<div class="grid2"><div class="card" style="display:grid;gap:14px"><h2>Datos del proyecto</h2>
+    <div class="formgrid">${f('c-nombre', 'Nombre del proyecto', p.nombre)}${f('c-inicio', 'Inicio de la curva', p.inicio, 'date')}
+    ${f('c-cliente', 'Cliente', p.cliente)}${f('c-contratista', 'Contratista', p.contratista)}${f('c-empresa', 'Control a cargo de', p.empresa)}
+    ${f('c-periodo', 'Periodo de control (días)', p.periodo ?? 7, 'number')}${f('c-monto', 'Monto contrato del contratista ($) · opcional', p.monto ?? '', 'text', 'Para ver los EP en pesos')}</div>
+    ${S.dirty ? `<div class="row"><button class="btn primary" id="saveAll" type="button">Guardar cambios</button><button class="btn" id="discard" type="button">Descartar</button></div>` : ''}
+    <div class="row"><button class="btn danger" id="delProj" type="button">Eliminar proyecto</button>${confirmDel}</div></div>
+    <div class="card" style="display:grid;gap:12px"><h2>Lo mínimo para un buen informe</h2>${reqList(p)}
+    <p class="note">Con eso la app calcula sola: curva planeada con perfil S ponderada por HH, curva real, proyección al ritmo actual, SPI, atraso en puntos y en semanas, Earned Schedule y control de estados de pago.</p></div></div>
+    ${local ? `<div class="card" style="display:grid;gap:12px"><h2>Respaldo y vista para compartir</h2>
+    <p class="muted" style="margin:0">Los datos se guardan en este dispositivo. Descarga un respaldo después de cada corte: sirve para pasar los datos a otro equipo y para publicar la vista de solo lectura.</p>
+    <div class="row"><button class="btn primary" id="bkDown" type="button">Descargar respaldo (datos.json)</button><label class="btn" for="bkFile" style="display:inline-flex;align-items:center">Restaurar desde archivo</label><input id="bkFile" type="file" accept=".json,application/json" hidden></div>
+    <p class="note" style="margin:0">Para actualizar lo que ven otros: sube ese datos.json al repositorio reemplazando el anterior. Link de solo lectura: <a href="${esc(location.origin + location.pathname)}?lectura">${esc(location.origin + location.pathname)}?lectura</a></p></div>` : ''}`;
+}
+function bindConfig() {
+  bindSaveBar(); bindGo();
+  const map = {'c-nombre': 'nombre', 'c-inicio': 'inicio', 'c-cliente': 'cliente', 'c-contratista': 'contratista', 'c-empresa': 'empresa', 'c-periodo': 'periodo', 'c-monto': 'monto'};
+  Object.entries(map).forEach(([id, k]) => $('#' + id)?.addEventListener('change', e => { let v = e.target.value; if (k === 'periodo') v = Math.max(1, parseInt(v) || 7); if (k === 'monto') v = v.trim() === '' ? '' : parseNum(v); startEdit()[k] = v; render(); }));
+  $('#delProj').onclick = () => { S.confirm = 'proj'; render(); };
+  $('#bkDown')?.addEventListener('click', backup);
+  $('#bkFile')?.addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try { const o = JSON.parse(await file.text()); if (!loadInto(o)) throw 0; S.dirty = false; S.draft = null; lwrite(allData().proyectos); render(); toast('Datos restaurados'); }
+    catch (x) { toast('El archivo no es un respaldo válido de la app'); }
+  });
+  $('#delProjNo')?.addEventListener('click', () => { S.confirm = null; render(); });
+  $('#delProjYes')?.addEventListener('click', async () => {
+    const id = S.cur; S.confirm = null; S.dirty = false; S.draft = null;
+    try { if (coll) await coll.doc(id).delete(); } catch (e) { toast('No se pudo eliminar'); return; }
+    delete S.projects[id]; S.order = S.order.filter(x => x !== id); if (local) { try { lwrite(allData().proyectos); } catch (e) {} } S.cur = S.order[0] || null; S.view = 'informe'; render(); toast('Proyecto eliminado');
+  });
+}
+
+/* ---------- guardar ---------- */
+let saving = false;
+async function save(p, id) {
+  if (readOnly) { toast('Tienes acceso de solo lectura'); return false; }
+  if (local) { try { p.actualizado = new Date().toISOString(); S.projects[id] = p; if (!S.order.includes(id)) S.order.unshift(id); lwrite(allData().proyectos); toast('Guardado en este dispositivo'); return true; } catch (e) { toast('No se pudo guardar en este dispositivo'); return false; } }
+  if (!coll) { toast('Guardado solo en esta sesión (sin conexión al almacenamiento)'); return true; }
+  if (saving) return false; saving = true;
+  try { p.actualizado = new Date().toISOString(); await coll.doc(id).set(JSON.parse(JSON.stringify(p))); toast('Guardado'); return true; }
+  catch (e) { if (e?.code === 'invalid_argument') { readOnly = true; toast('No tienes permiso para guardar cambios'); } else if (e?.code === 'quota_exceeded') toast('El almacenamiento está lleno: elimina proyectos antiguos'); else toast('No se pudo guardar. Intenta de nuevo.'); return false; }
+  finally { saving = false; }
+}
+function showSave() { const b = $('#saveBar'); if (b) b.hidden = false; }
+async function commit() {
+  if (!S.dirty) { toast('No hay cambios por guardar'); return; } const id = S.cur, p = S.draft;
+  S.projects[id] = p; const ok = await save(p, id); if (ok) { S.dirty = false; S.draft = null; } render();
+}
+function go(v) { if (!views.includes(v)) return; S.view = v; S.confirm = null; try { localStorage.setItem('cs.view', v); } catch (e) {} if (location.hash.slice(1) !== v) history.replaceState(null, '', '#' + v); render(); window.scrollTo(0, 0); }
+
+/* ---------- eventos globales ---------- */
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.v)));
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (views.includes(v) && v !== S.view) go(v); });
+$('#proj').addEventListener('change', e => { if (S.dirty) { S.dirty = false; S.draft = null; toast('Cambios sin guardar descartados'); } S.cur = e.target.value; S.cutSel = null; S.editCut = null; try { localStorage.setItem('cs.proj', S.cur); } catch (x) {} render(); });
+$('#newProjBtn').addEventListener('click', () => { S.newProj = true; render(); });
+let lastNar = innerWidth < 640; addEventListener('resize', () => { const n = innerWidth < 640; if (n !== lastNar) { lastNar = n; const ae = document.activeElement; if (S.view === 'informe' && !(ae && ae.matches && ae.matches('input,textarea'))) render(); } });
+render();
+
+/* ---------- datos ---------- */
+(async () => {
+  const timer = setTimeout(() => { if (S.loading) { S.loading = false; S.offline = true; render(); toast('No se pudo leer el almacenamiento todavía'); } }, 10000);
+  try { db = window.claude ? await window.claude.use?.('db') : null; } catch (e) { db = null; }
+  if (!db) {
+    clearTimeout(timer); local = true;
+    const pub = async () => { try { const r = await fetch('datos.json', {cache: 'no-store'}); return r.ok ? await r.json() : null; } catch (e) { return null; } };
+    if (wantRO) { readOnly = true; if (!loadInto(await pub())) toast('Aún no hay datos publicados'); }
+    else { const mine = lread(); if (!(mine && loadInto(mine))) { if (loadInto(await pub())) { try { lwrite(allData().proyectos); } catch (e) {} } } }
+    S.loading = false; render();
+    if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+    return;
+  }
+  try { const u = await window.claude.use('user'); const c = u && await u.can('data.write'); if (c === false) { readOnly = true; render(); } } catch (e) {}
+  coll = db.collection('proyectos');
+  coll.onSnapshot(snap => {
+    if (!snap.metadata.fromCache) clearTimeout(timer);
+    snap.docs.forEach(d => { S.projects[d.id] = d.data(); });
+    const ids = new Set(snap.docs.map(d => d.id));
+    Object.keys(S.projects).forEach(id => { if (!ids.has(id) && !(S.cur === id && S.dirty)) delete S.projects[id]; });
+    S.order = Object.keys(S.projects).sort((a, b) => (S.projects[b].actualizado || '').localeCompare(S.projects[a].actualizado || ''));
+    if (!S.cur || !S.projects[S.cur]) S.cur = S.order[0] || null;
+    S.loading = false; S.offline = false;
+    const ae = document.activeElement; const keep = ae && ae.matches && ae.matches('input,textarea,select') && S.dirty;
+    if (!keep) render();
+  }, err => { clearTimeout(timer); S.loading = false; S.offline = true; render(); });
+})();
+})();
+</script>
+
+</body>
+</html>

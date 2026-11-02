@@ -1,0 +1,529 @@
+{
+ "app": "curva-s-ecopreneur",
+ "version": 1,
+ "exportado": "2026-11-02T13:58:46.170Z",
+ "proyectos": {
+  "carozzi-nos-montaje": {
+   "actividades": [
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-09-22",
+     "hh": 18,
+     "id": "t64",
+     "ini": "2026-09-22",
+     "nombre": "Entrega de terreno",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-09-25",
+     "hh": 54,
+     "id": "t65",
+     "ini": "2026-09-23",
+     "nombre": "Instalación de faena",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-12",
+     "hh": 144,
+     "id": "t66",
+     "ini": "2026-11-03",
+     "nombre": "Montaje DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t67",
+     "ini": "2026-10-05",
+     "nombre": "Montaje bombas de lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t68",
+     "ini": "2026-10-05",
+     "nombre": "Montaje piping bombas de lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t69",
+     "ini": "2026-10-05",
+     "nombre": "Montaje estanque de lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t70",
+     "ini": "2026-10-05",
+     "nombre": "Montaje piping estanque de lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-06",
+     "hh": 270,
+     "id": "t71",
+     "ini": "2026-10-19",
+     "nombre": "Montaje de bombas RAS/WAS",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-06",
+     "hh": 270,
+     "id": "t72",
+     "ini": "2026-10-19",
+     "nombre": "Montaje piping Succión RAS/WAS",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-27",
+     "hh": 270,
+     "id": "t73",
+     "ini": "2026-11-09",
+     "nombre": "Montaje bombas impulsión preaireación 1 y 2 a MBR 3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t74",
+     "ini": "2026-10-05",
+     "nombre": "Montaje de bombas de permeado",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-30",
+     "hh": 270,
+     "id": "t75",
+     "ini": "2026-10-12",
+     "nombre": "Montaje de estanques y equipos sistema CIP",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-30",
+     "hh": 270,
+     "id": "t76",
+     "ini": "2026-10-12",
+     "nombre": "Montaje piping equipos CIP",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-23",
+     "hh": 270,
+     "id": "t77",
+     "ini": "2026-10-05",
+     "nombre": "Montaje de línea de permeado nueva linea MBR (impulsión)",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-13",
+     "hh": 270,
+     "id": "t78",
+     "ini": "2026-10-26",
+     "nombre": "Montaje línea succión de permeado",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-12-07",
+     "hh": 108,
+     "id": "t79",
+     "ini": "2026-11-30",
+     "nombre": "Montaje caudalimetros e instrumentos",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-26",
+     "hh": 90,
+     "id": "t80",
+     "ini": "2026-11-20",
+     "nombre": "Montaje módulo nuevo MBR 3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-10-30",
+     "hh": 270,
+     "id": "t81",
+     "ini": "2026-10-12",
+     "nombre": "Instalación nueva base de modulo 4 en MBR3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-03",
+     "hh": 126,
+     "id": "t82",
+     "ini": "2026-10-26",
+     "nombre": "Intervención línea de permeado",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-13",
+     "hh": 270,
+     "id": "t83",
+     "ini": "2026-10-26",
+     "nombre": "Intervención línea de lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-26",
+     "hh": 180,
+     "id": "t84",
+     "ini": "2026-11-13",
+     "nombre": "Línea de alimentación nuevo DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-26",
+     "hh": 180,
+     "id": "t85",
+     "ini": "2026-11-13",
+     "nombre": "Línea de descarga nuevo DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-17",
+     "hh": 180,
+     "id": "t86",
+     "ini": "2026-11-04",
+     "nombre": "Línea de aire MBR 3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-17",
+     "hh": 180,
+     "id": "t87",
+     "ini": "2026-11-04",
+     "nombre": "Línea de aire MBR 1 a MBR3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-17",
+     "hh": 180,
+     "id": "t88",
+     "ini": "2026-11-04",
+     "nombre": "Línea de aire MBR2 a MBR3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-27",
+     "hh": 270,
+     "id": "t89",
+     "ini": "2026-11-09",
+     "nombre": "Línea RAS MBR3 a preaireación 1 y 2 (impulsión)",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-27",
+     "hh": 270,
+     "id": "t90",
+     "ini": "2026-11-09",
+     "nombre": "Línea impulsión WAS",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-12-11",
+     "hh": 180,
+     "id": "t91",
+     "ini": "2026-11-30",
+     "nombre": "Línea de impulsión preaireación 1 y 2 a MBR3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-26",
+     "hh": 90,
+     "id": "t92",
+     "ini": "2026-11-20",
+     "nombre": "Retiro e instalación de modulos de MBR 1 y 2 a MBR3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-18",
+     "hh": 234,
+     "id": "t93",
+     "ini": "2026-11-02",
+     "nombre": "Conexión línea de aire comprimido",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje mecánico",
+     "fin": "2026-11-27",
+     "hh": 270,
+     "id": "t94",
+     "ini": "2026-11-09",
+     "nombre": "Conexión dosificación linea de quimicos a sistema existente",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-09-22",
+     "hh": 18,
+     "id": "t96",
+     "ini": "2026-09-22",
+     "nombre": "Entrega de terreno",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-09-25",
+     "hh": 54,
+     "id": "t97",
+     "ini": "2026-09-23",
+     "nombre": "Instalación de faena",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-10-09",
+     "hh": 180,
+     "id": "t98",
+     "ini": "2026-09-28",
+     "nombre": "Canalización Subterranea",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-10-16",
+     "hh": 270,
+     "id": "t99",
+     "ini": "2026-09-28",
+     "nombre": "Instalación EPC",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-27",
+     "hh": 270,
+     "id": "t100",
+     "ini": "2026-11-09",
+     "nombre": "Intalación CAG",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-20",
+     "hh": 108,
+     "id": "t101",
+     "ini": "2026-11-13",
+     "nombre": "Cableado y conexionado DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-06",
+     "hh": 180,
+     "id": "t102",
+     "ini": "2026-10-26",
+     "nombre": "Cableado y conexionado bombas lodos DAF",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-20",
+     "hh": 180,
+     "id": "t103",
+     "ini": "2026-11-09",
+     "nombre": "Cableado y conexionado RAS",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-12-11",
+     "hh": 180,
+     "id": "t104",
+     "ini": "2026-11-30",
+     "nombre": "Cableado y conexionado bombas impulsión preaireación 1 y 2 a MBR 3",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-06",
+     "hh": 180,
+     "id": "t105",
+     "ini": "2026-10-26",
+     "nombre": "Cableado y conexionado de bombas de permeado",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-12-14",
+     "hh": 90,
+     "id": "t106",
+     "ini": "2026-12-08",
+     "nombre": "Cableado y conexionado caudalimetros e instrumentos",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-12-10",
+     "hh": 180,
+     "id": "t107",
+     "ini": "2026-11-27",
+     "nombre": "Cableado y conexionado instrumentos modulos MBR",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-06",
+     "hh": 180,
+     "id": "t108",
+     "ini": "2026-10-26",
+     "nombre": "Cableado y conexionado instrumentos linea de permeado nueva linea MBR",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-10-02",
+     "hh": 90,
+     "id": "t109",
+     "ini": "2026-09-28",
+     "nombre": "Instalación de TFC en sala eléctrica",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-23",
+     "hh": 252,
+     "id": "t110",
+     "ini": "2026-11-04",
+     "nombre": "Conexionado de equipos e instrumentos a TFC",
+     "perfil": "S"
+    },
+    {
+     "fase": "Montaje eléctrico",
+     "fin": "2026-11-30",
+     "hh": 90,
+     "id": "t112",
+     "ini": "2026-11-24",
+     "nombre": "Verificación punto a punto",
+     "perfil": "S"
+    },
+    {
+     "fase": "Comisionamiento y puesta en marcha",
+     "fin": "2026-12-14",
+     "hh": 180,
+     "id": "t113",
+     "ini": "2026-12-01",
+     "nombre": "Comisionamiento",
+     "perfil": "S"
+    },
+    {
+     "fase": "Comisionamiento y puesta en marcha",
+     "fin": "2026-12-14",
+     "hh": 90,
+     "id": "t114",
+     "ini": "2026-12-08",
+     "nombre": "Recepción definitiva",
+     "perfil": "S"
+    },
+    {
+     "fase": "Comisionamiento y puesta en marcha",
+     "fin": "2027-01-13",
+     "hh": 396,
+     "id": "t115",
+     "ini": "2026-12-15",
+     "nombre": "Puesta en marcha",
+     "perfil": "S"
+    }
+   ],
+   "actualizado": "2026-11-02T13:58:46.170Z",
+   "cliente": "Carozzi",
+   "contratista": "IngenProject",
+   "cortes": [
+    {
+     "avance": {
+      "t100": 0,
+      "t101": 0,
+      "t102": 0,
+      "t103": 0,
+      "t104": 0,
+      "t105": 0,
+      "t106": 0,
+      "t107": 0,
+      "t108": 0,
+      "t109": 0,
+      "t110": 0,
+      "t112": 0,
+      "t113": 0,
+      "t114": 0,
+      "t115": 0,
+      "t64": 100,
+      "t65": 100,
+      "t66": 0,
+      "t67": 0,
+      "t68": 80,
+      "t69": 0,
+      "t70": 80,
+      "t71": 20,
+      "t72": 80,
+      "t73": 0,
+      "t74": 100,
+      "t75": 20,
+      "t76": 0,
+      "t77": 40,
+      "t78": 0,
+      "t79": 0,
+      "t80": 0,
+      "t81": 50,
+      "t82": 15,
+      "t83": 10,
+      "t84": 0,
+      "t85": 19,
+      "t86": 48,
+      "t87": 22,
+      "t88": 0,
+      "t89": 5,
+      "t90": 0,
+      "t91": 0,
+      "t92": 0,
+      "t93": 0,
+      "t94": 0,
+      "t96": 100,
+      "t97": 100,
+      "t98": 80,
+      "t99": 100
+     },
+     "ep": "",
+     "fecha": "2026-10-26"
+    }
+   ],
+   "creado": "2026-11-02T13:50:00Z",
+   "empresa": "ECOPRENEUR",
+   "fuente": "Gantt ID-209-608-CG-G-01 corte 26-10-2026 (HH y % completado)",
+   "inicio": "2026-09-21",
+   "monto": "",
+   "nombre": "Ampliación PTAR Carozzi Nos · Montaje y PEM",
+   "periodo": 7
+  }
+ }
+}

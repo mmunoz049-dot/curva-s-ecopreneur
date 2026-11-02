@@ -164,7 +164,7 @@ td input.dt{width:140px}
 .empty p{max-width:56ch;margin:0}
 .issues{margin:0;padding-left:18px;color:var(--delay);font-size:.9rem}
 .selectwrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-@media (max-width:560px){.kpi .v{font-size:1.5rem}.states{grid-template-columns:repeat(2,1fr)}.hb{display:none}.top .wrap{gap:8px 12px}.top{position:static}.projsel label{display:none}th,td{padding:6px 4px}table{font-size:.85rem}.card{padding:12px}}
+@media (max-width:560px){.kpi .v{font-size:1.5rem}.states{grid-template-columns:repeat(2,1fr)}.hb{display:none}.top .wrap{gap:8px 12px}.top{position:static}th,td{padding:6px 4px}table{font-size:.85rem}.card{padding:12px}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s}}
 </style>
 
@@ -298,6 +298,7 @@ function render() {
   const sel = $('#proj');
   sel.innerHTML = S.order.length ? S.order.map(id => `<option value="${esc(id)}"${id === S.cur ? ' selected' : ''}>${esc(S.projects[id].nombre || 'Sin nombre')}</option>`).join('') : '<option>Sin proyectos</option>';
   sel.disabled = !S.order.length;
+  const pl = $('label[for="proj"]'); if (pl) pl.textContent = S.order.length > 1 ? `Proyectos (${S.order.length})` : 'Proyecto';
   const m = $('#main');
   if (S.newProj) { m.innerHTML = viewNew(); bindNew(); return; }
   if (S.loading) { m.innerHTML = `<div class="card empty"><h2>Cargando proyectos…</h2><p class="muted">Leyendo los datos guardados.</p></div>`; return; }
@@ -658,7 +659,7 @@ function bindConfig() {
   $('#delProj').onclick = () => { S.confirm = 'proj'; render(); };
   $('#bkDown')?.addEventListener('click', backup);
   $('#bkPub')?.addEventListener('click', async () => {
-    try { const r = await fetch('datos.json', {cache: 'no-store'}); if (!r.ok) throw 0; if (!loadInto(await r.json())) throw 0; S.dirty = false; S.draft = null; lwrite(allData().proyectos); render(); toast('Datos publicados cargados en este dispositivo'); }
+    try { const r = await fetch('datos.json?v=' + Date.now(), {cache: 'no-store'}); if (!r.ok) throw 0; if (!loadInto(await r.json())) throw 0; S.dirty = false; S.draft = null; lwrite(allData().proyectos); render(); toast('Datos publicados cargados en este dispositivo'); }
     catch (x) { toast('No se pudieron leer los datos publicados'); }
   });
   $('#bkFile')?.addEventListener('change', async e => {
@@ -706,7 +707,7 @@ render();
   try { db = window.claude ? await window.claude.use?.('db') : null; } catch (e) { db = null; }
   if (!db) {
     clearTimeout(timer); local = true;
-    const pub = async () => { try { const r = await fetch('datos.json', {cache: 'no-store'}); return r.ok ? await r.json() : null; } catch (e) { return null; } };
+    const pub = async () => { try { const r = await fetch('datos.json?v=' + Date.now(), {cache: 'no-store'}); return r.ok ? await r.json() : null; } catch (e) { return null; } };
     if (wantRO) { readOnly = true; if (!loadInto(await pub())) toast('Aún no hay datos publicados'); }
     else {
       // lo guardado en el equipo + lo publicado en el sitio: entra lo nuevo y gana la versión más reciente de cada proyecto

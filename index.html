@@ -208,6 +208,7 @@ const money = x => isFinite(x) ? '$ ' + Math.round(x).toLocaleString('es-CL') : 
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const PERFILES = ['S', 'Lineal', 'Inicio', 'Final'];
 const F = (x, p) => p === 'Lineal' ? x : p === 'Inicio' ? 1 - (1 - x) ** 2 : p === 'Final' ? x * x : 3 * x * x - 2 * x * x * x;
+const UN = p => (p && p.unidad) || 'HH';
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 /* ---------- estado ---------- */
@@ -369,7 +370,7 @@ function viewInforme(p) {
   const k = (l, v, s, cls = '') => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   const kpis = `<div class="kpis">
     ${k('% Planeado', pct(M.prog), 'según línea base')}
-    ${k('% Real', pct(M.real), 'completado ponderado por HH')}
+    ${k('% Real', pct(M.real), 'completado ponderado por ' + UN(p))}
     ${k('Atraso en avance', pts(M.dev), 'real − planeado', M.dev < -0.0005 ? 'bad' : M.dev > 0.0005 ? 'good' : '')}
     ${k('SPI', nf(M.spi, 2), M.spi < 0.995 ? 'bajo 1: vamos lentos' : M.spi > 1.005 ? 'sobre 1: adelantados' : 'en plazo', M.spi < 0.995 ? 'bad' : M.spi > 1.005 ? 'good' : '')}
     ${k('Atraso en tiempo', sgn(M.svt, 1, ' sem'), (M.svt < 0 ? nf(-M.svt * 7, 0) + ' días detrás' : nf(M.svt * 7, 0) + ' días adelante'), late ? 'bad' : ahead ? 'good' : '')}
@@ -407,18 +408,18 @@ function viewInforme(p) {
   }
   const epCard = `<div class="card" style="display:grid;gap:10px"><h3>Control de estados de pago</h3>${epHtml}</div>`;
   const fase = `<div class="card"><h3>Avance por fase</h3><div class="tw"><table><thead><tr><th>Fase</th><th class="n">Peso</th><th class="hb">Planeado / real</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Desvío</th></tr></thead><tbody>
-    ${M.faseRows.map(f => `<tr><td>${esc(f.f)}<div class="f">${f.n} act. · ${f.hh.toLocaleString('es-CL')} HH</div></td><td class="n">${pct(f.w, 0)}</td><td class="hb"><div class="bar" title="Planeado ${pct(f.p)} · Real ${pct(f.r)}"><span class="p" style="width:${f.p * 100}%"></span><span class="r" style="width:${f.r * 100}%"></span></div></td><td class="n">${pct(f.p, 0)}</td><td class="n">${pct(f.r, 0)}</td><td class="n ${f.r - f.p < -0.0005 ? 'bad' : f.r - f.p > 0.0005 ? 'good' : ''}">${pts(f.r - f.p)}</td></tr>`).join('')}
+    ${M.faseRows.map(f => `<tr><td>${esc(f.f)}<div class="f">${f.n} act. · ${f.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(f.w, 0)}</td><td class="hb"><div class="bar" title="Planeado ${pct(f.p)} · Real ${pct(f.r)}"><span class="p" style="width:${f.p * 100}%"></span><span class="r" style="width:${f.r * 100}%"></span></div></td><td class="n">${pct(f.p, 0)}</td><td class="n">${pct(f.r, 0)}</td><td class="n ${f.r - f.p < -0.0005 ? 'bad' : f.r - f.p > 0.0005 ? 'good' : ''}">${pts(f.r - f.p)}</td></tr>`).join('')}
     </tbody></table></div></div>`;
   const top = M.actRows.filter(a => a.imp < -0.00005).sort((a, b) => a.imp - b.imp).slice(0, 10);
   const topCard = `<div class="card"><h3>Las 10 actividades que más atrasan</h3>${top.length ? `<div class="tw"><table><thead><tr><th>Actividad</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Impacto</th></tr></thead><tbody>
-    ${top.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh} HH</div></td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
+    ${top.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
     </tbody></table></div><p class="note">Impacto: puntos del avance total que cada actividad le resta al proyecto.</p>` : '<p class="muted">Ninguna actividad está bajo su programa.</p>'}</div>`;
   const cnt = s => M.actRows.filter(a => a.st === s).length;
   const states = `<div class="card"><h3>Estado de actividades</h3><div class="states" style="margin-top:8px">
     <div class="state"><b>${cnt('Terminada')}</b>Terminadas</div><div class="state"><b class="good">${cnt('Adelantada')}</b>Adelantadas</div>
     <div class="state"><b>${cnt('Al día')}</b>Al día</div><div class="state"><b class="bad">${cnt('Atrasada')}</b>Atrasadas</div></div></div>`;
   const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
-  const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} HH</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} HH</span></div>`;
+  const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</span></div>`;
   return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
     <div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}${states}</div></div>${exp}`;
 }
@@ -499,7 +500,7 @@ async function exportCsv() {
     const r = M.hasCut ? M.realPts.filter(x => x.d <= w.d && x.d > w.d - M.per).pop() : null;
     rows.push([w.k, fD(w.d), nf(M.plan(w.d) * 100, 2), r ? nf(r.v * 100, 2) : '', M.hasCut && w.d >= M.cut ? nf(M.proj(w.d) * 100, 2) : '', r && r.ep != null ? nf(r.ep * 100, 2) : '']);
   });
-  rows.push([]); rows.push(['Actividad', 'Fase', 'Inicio', 'Fin', 'HH', 'Peso %', '% Prog. al corte', '% Real al corte', 'Impacto (pts)', 'Estado']);
+  rows.push([]); rows.push(['Actividad', 'Fase', 'Inicio', 'Fin', UN(p), 'Peso %', '% Prog. al corte', '% Real al corte', 'Impacto (pts)', 'Estado']);
   (M.actRows || []).forEach(a => rows.push([a.nombre, a.fase || '', fD(a.s), fD(a.e - 1), a.hh, nf(a.w * 100, 2), nf(a.pa * 100, 1), nf(a.ra * 100, 1), nf(a.imp * 100, 2), a.st]));
   const csv = '﻿' + rows.map(r => r.map(v => { v = String(v ?? ''); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';')).join('\r\n');
   await saveFile(`Curva_S_${(p.nombre || 'proyecto').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w-]+/g, '_').slice(0, 40)}_${M.hasCut ? fD(M.cut) : 'plan'}.csv`, csv, 'text/csv');
@@ -547,7 +548,7 @@ function viewAvance(p) {
     <details><summary class="btn" style="display:inline-block">Pegar % desde Excel o Project</summary>
       <div style="display:grid;gap:8px;margin-top:10px"><p class="note">Pega una columna con el % completado en el mismo orden de la lista, o dos columnas "Actividad · %" y se asocian por nombre.</p>
       <textarea class="in" id="pastePct" placeholder="80%&#10;0%&#10;35%"></textarea><div class="row"><button class="btn" id="applyPct" type="button">Aplicar</button></div></div></details>
-    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th class="n">HH</th><th class="n">Prog. a la fecha</th><th class="n">% completado</th></tr></thead><tbody>
+    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th class="n">${UN(p)}</th><th class="n">Prog. a la fecha</th><th class="n">% completado</th></tr></thead><tbody>
     ${acts.map(a => { const w = W[a.id]; const pa = w && isFinite(cd) ? M.planA(w, cd) : NaN; const v = (c.avance || {})[a.id]; const r = (+v || 0) / 100;
       return `<tr class="${isFinite(pa) && r < pa - 0.005 ? 'hl' : ''}"><td>${esc(a.nombre)}</td><td class="f">${esc(a.fase || '')}</td><td class="n">${esc(a.hh)}</td><td class="n">${pct(pa, 0)}</td><td class="n"><input class="in pct" data-act="${esc(a.id)}" inputmode="decimal" value="${v ?? ''}" aria-label="% completado ${esc(a.nombre)}"></td></tr>`; }).join('')}
     </tbody></table></div>
@@ -603,7 +604,7 @@ function viewActs(p) {
       <div class="row"><button class="btn" id="pasteAdd" type="button">Agregar a la lista</button><button class="btn" id="pasteRep" type="button">Reemplazar la lista</button></div></div></details>
     ${issues.length ? `<ul class="issues">${issues.slice(0, 8).map(i => `<li>${esc(i)}</li>`).join('')}${issues.length > 8 ? `<li>y ${issues.length - 8} más</li>` : ''}</ul>` : ''}
     <datalist id="fasesList">${fases.map(f => `<option value="${esc(f)}">`).join('')}</datalist>
-    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th>Inicio</th><th>Fin</th><th class="n">HH</th><th class="n">Peso</th><th>Perfil</th><th></th></tr></thead><tbody>
+    <div class="tw"><table><thead><tr><th>Actividad</th><th>Fase</th><th>Inicio</th><th>Fin</th><th class="n">${UN(p)}</th><th class="n">Peso</th><th>Perfil</th><th></th></tr></thead><tbody>
     ${acts.map((a, i) => `<tr><td><input class="in" data-i="${i}" data-k="nombre" value="${esc(a.nombre)}" aria-label="Nombre" style="min-width:220px"></td>
       <td><input class="in" list="fasesList" data-i="${i}" data-k="fase" value="${esc(a.fase)}" aria-label="Fase" style="min-width:150px"></td>
       <td><input class="in dt" type="date" data-i="${i}" data-k="ini" value="${esc(a.ini)}" aria-label="Inicio"></td>
@@ -613,7 +614,7 @@ function viewActs(p) {
       <td><select class="in" data-i="${i}" data-k="perfil" aria-label="Perfil">${PERFILES.map(x => `<option${(a.perfil || 'S') === x ? ' selected' : ''}>${x}</option>`).join('')}</select></td>
       <td><button class="btn danger" data-del="${i}" type="button" aria-label="Quitar ${esc(a.nombre)}">×</button></td></tr>`).join('')}
     </tbody></table></div>
-    <p class="note">${acts.length} actividades · ${tot.toLocaleString('es-CL')} HH. Perfil S = avanza lento, rápido y lento (recomendado). Inicio o Final cargan el avance al comienzo o al cierre.</p></div>`;
+    <p class="note">${acts.length} actividades · ${tot.toLocaleString('es-CL')} ${UN(p)}. Perfil S = avanza lento, rápido y lento (recomendado). Inicio o Final cargan el avance al comienzo o al cierre.</p></div>`;
 }
 function bindActs() {
   bindSaveBar();
@@ -640,7 +641,7 @@ function viewConfig(p) {
   return `<div class="grid2"><div class="card" style="display:grid;gap:14px"><h2>Datos del proyecto</h2>
     <div class="formgrid">${f('c-nombre', 'Nombre del proyecto', p.nombre)}${f('c-inicio', 'Inicio de la curva', p.inicio, 'date')}
     ${f('c-cliente', 'Cliente', p.cliente)}${f('c-contratista', 'Contratista', p.contratista)}${f('c-empresa', 'Control a cargo de', p.empresa)}
-    ${f('c-periodo', 'Periodo de control (días)', p.periodo ?? 7, 'number')}${f('c-monto', 'Monto contrato del contratista ($) · opcional', p.monto ?? '', 'text', 'Para ver los EP en pesos')}</div>
+    ${f('c-periodo', 'Periodo de control (días)', p.periodo ?? 7, 'number')}${f('c-unidad', 'Unidad del peso de actividades', p.unidad || 'HH', 'text', 'HH, $, puntos…')}${f('c-monto', 'Monto contrato del contratista ($) · opcional', p.monto ?? '', 'text', 'Para ver los EP en pesos')}</div>
     ${S.dirty ? `<div class="row"><button class="btn primary" id="saveAll" type="button">Guardar cambios</button><button class="btn" id="discard" type="button">Descartar</button></div>` : ''}
     <div class="row"><button class="btn danger" id="delProj" type="button">Eliminar proyecto</button>${confirmDel}</div></div>
     <div class="card" style="display:grid;gap:12px"><h2>Lo mínimo para un buen informe</h2>${reqList(p)}
@@ -652,7 +653,7 @@ function viewConfig(p) {
 }
 function bindConfig() {
   bindSaveBar(); bindGo();
-  const map = {'c-nombre': 'nombre', 'c-inicio': 'inicio', 'c-cliente': 'cliente', 'c-contratista': 'contratista', 'c-empresa': 'empresa', 'c-periodo': 'periodo', 'c-monto': 'monto'};
+  const map = {'c-nombre': 'nombre', 'c-inicio': 'inicio', 'c-cliente': 'cliente', 'c-contratista': 'contratista', 'c-empresa': 'empresa', 'c-periodo': 'periodo', 'c-monto': 'monto', 'c-unidad': 'unidad'};
   Object.entries(map).forEach(([id, k]) => $('#' + id)?.addEventListener('change', e => { let v = e.target.value; if (k === 'periodo') v = Math.max(1, parseInt(v) || 7); if (k === 'monto') v = v.trim() === '' ? '' : parseNum(v); startEdit()[k] = v; render(); }));
   $('#delProj').onclick = () => { S.confirm = 'proj'; render(); };
   $('#bkDown')?.addEventListener('click', backup);

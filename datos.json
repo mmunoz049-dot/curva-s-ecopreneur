@@ -1,7 +1,7 @@
 {
  "app": "curva-s-ecopreneur",
  "version": 1,
- "exportado": "2026-11-02T16:00:00Z",
+ "exportado": "2026-11-02T17:00:00Z",
  "proyectos": {
   "carozzi-nos-montaje": {
    "actividades": [
@@ -580,6 +580,539 @@
    "monto": "",
    "nombre": "Ampliación PTAR Carozzi Nos · Montaje y PEM",
    "periodo": 7
+  },
+  "alsec-llanos-de-cuiba": {
+   "nombre": "ALSEC Llanos de Cuiba · PTARND",
+   "cliente": "ALSEC",
+   "contratista": "Por adjudicar",
+   "empresa": "ECOPRENEUR",
+   "inicio": "2026-07-15",
+   "periodo": 7,
+   "monto": "",
+   "actividades": [
+    {
+     "id": "t11",
+     "nombre": "Ingeniería Detalle - Disciplina Procesos",
+     "fase": "Ingeniería",
+     "ini": "2026-07-15",
+     "fin": "2026-10-02",
+     "perfil": "S",
+     "hh": 221.0
+    },
+    {
+     "id": "t12",
+     "nombre": "Ingeniería Detalle - Disciplina General",
+     "fase": "Ingeniería",
+     "ini": "2026-08-05",
+     "fin": "2026-09-11",
+     "perfil": "S",
+     "hh": 105.0
+    },
+    {
+     "id": "t13",
+     "nombre": "Ingeniería Detalle - Disciplina Mecánica - Piping",
+     "fase": "Ingeniería",
+     "ini": "2026-09-14",
+     "fin": "2026-11-20",
+     "perfil": "S",
+     "hh": 187.8
+    },
+    {
+     "id": "t14",
+     "nombre": "Ingeniería Detalle - Disciplina Requerimientos Civiles",
+     "fase": "Ingeniería",
+     "ini": "2026-08-05",
+     "fin": "2026-10-09",
+     "perfil": "S",
+     "hh": 182.3
+    },
+    {
+     "id": "t16",
+     "nombre": "Entrega Revisión B - Planos y Memorias de Obras Civiles, Radieres y Salas",
+     "fase": "Ingeniería",
+     "ini": "2026-09-14",
+     "fin": "2026-10-09",
+     "perfil": "S",
+     "hh": 71.8
+    },
+    {
+     "id": "t17",
+     "nombre": "Entrega Revisión B - Planos y Memorias de Estructuras Metálicas",
+     "fase": "Ingeniería",
+     "ini": "2026-10-12",
+     "fin": "2026-10-16",
+     "perfil": "S",
+     "hh": 13.8
+    },
+    {
+     "id": "t18",
+     "nombre": "Validación Conjunta y Entrega en Revisión 0",
+     "fase": "Ingeniería",
+     "ini": "2026-10-12",
+     "fin": "2026-10-23",
+     "perfil": "S",
+     "hh": 33.1
+    },
+    {
+     "id": "t19",
+     "nombre": "Ingeniería Detalle - Disciplina Arquitectura",
+     "fase": "Ingeniería",
+     "ini": "2026-08-05",
+     "fin": "2026-10-09",
+     "perfil": "S",
+     "hh": 182.3
+    },
+    {
+     "id": "t20",
+     "nombre": "Ingeniería Detalle - Disciplina Eléctrica-Instrumentación Canalizaciones y Montaje",
+     "fase": "Ingeniería",
+     "ini": "2026-11-23",
+     "fin": "2026-12-18",
+     "perfil": "S",
+     "hh": 71.8
+    },
+    {
+     "id": "t21",
+     "nombre": "Ingeniería Detalle - Disciplina Eléctrica Fabricación de Tableros Eléctricos",
+     "fase": "Ingeniería",
+     "ini": "2026-10-05",
+     "fin": "2026-12-21",
+     "perfil": "S",
+     "hh": 215.5
+    },
+    {
+     "id": "t22",
+     "nombre": "Ingeniería Detalle - Disciplina Instrumentación Fabricación de Tableros Eléctricos",
+     "fase": "Ingeniería",
+     "ini": "2026-10-05",
+     "fin": "2026-12-21",
+     "perfil": "S",
+     "hh": 215.5
+    },
+    {
+     "id": "t25",
+     "nombre": "Estanques Sedimentador/Aireación y Puente Barredor - TOROEquipment",
+     "fase": "Suministros",
+     "ini": "2026-07-15",
+     "fin": "2026-09-22",
+     "perfil": "S",
+     "hh": 844.8
+    },
+    {
+     "id": "t26",
+     "nombre": "Sistema de Difusión de Aire - SSI",
+     "fase": "Suministros",
+     "ini": "2026-07-15",
+     "fin": "2026-10-23",
+     "perfil": "S",
+     "hh": 1219.0
+    },
+    {
+     "id": "t27",
+     "nombre": "Sopladores Sistema de Aireación - Mapner",
+     "fase": "Suministros",
+     "ini": "2026-07-15",
+     "fin": "2026-09-01",
+     "perfil": "S",
+     "hh": 591.4
+    },
+    {
+     "id": "t29",
+     "nombre": "Estanque de Dosificación de 1,46 m3",
+     "fase": "Suministros",
+     "ini": "2026-12-22",
+     "fin": "2027-01-11",
+     "perfil": "S",
+     "hh": 253.4
+    },
+    {
+     "id": "t30",
+     "nombre": "Tablero de Fuerza y Control",
+     "fase": "Suministros",
+     "ini": "2026-12-22",
+     "fin": "2027-02-08",
+     "perfil": "S",
+     "hh": 591.4
+    },
+    {
+     "id": "t32",
+     "nombre": "Transporte Nacional Suministros Internacionales USA",
+     "fase": "Logística y transporte",
+     "ini": "2026-10-26",
+     "fin": "2026-11-24",
+     "perfil": "S",
+     "hh": 333.3
+    },
+    {
+     "id": "t33",
+     "nombre": "Transporte Nacional Suministros Internacionales EU",
+     "fase": "Logística y transporte",
+     "ini": "2026-09-23",
+     "fin": "2026-11-05",
+     "perfil": "S",
+     "hh": 488.9
+    },
+    {
+     "id": "t34",
+     "nombre": "Importación y Nacionalización de Suministros Internacionales",
+     "fase": "Logística y transporte",
+     "ini": "2026-11-06",
+     "fin": "2026-11-12",
+     "perfil": "S",
+     "hh": 77.8
+    },
+    {
+     "id": "t35",
+     "nombre": "Transporte Nacional Suministros Nacionales",
+     "fase": "Logística y transporte",
+     "ini": "2027-02-09",
+     "fin": "2027-02-17",
+     "perfil": "S",
+     "hh": 100.0
+    },
+    {
+     "id": "t47",
+     "nombre": "Acreditación",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-01-07",
+     "fin": "2027-01-20",
+     "perfil": "S",
+     "hh": 375.0
+    },
+    {
+     "id": "t48",
+     "nombre": "Instalación de Faena",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-01-21",
+     "fin": "2027-01-25",
+     "perfil": "S",
+     "hh": 133.9
+    },
+    {
+     "id": "t50",
+     "nombre": "Revision de Materiales",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-01-26",
+     "fin": "2027-01-27",
+     "perfil": "S",
+     "hh": 53.6
+    },
+    {
+     "id": "t51",
+     "nombre": "Colocación de placas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-01-28",
+     "fin": "2027-02-04",
+     "perfil": "S",
+     "hh": 214.3
+    },
+    {
+     "id": "t52",
+     "nombre": "Atornillado de Placas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-01-27",
+     "fin": "2027-01-29",
+     "perfil": "S",
+     "hh": 80.4
+    },
+    {
+     "id": "t53",
+     "nombre": "Sellado de placas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-01",
+     "fin": "2027-02-02",
+     "perfil": "S",
+     "hh": 53.6
+    },
+    {
+     "id": "t54",
+     "nombre": "Instalación de Manhole",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-03",
+     "fin": "2027-02-03",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t55",
+     "nombre": "Instalación de Bridas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-04",
+     "fin": "2027-02-04",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t57",
+     "nombre": "Revision de Materiales",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-05",
+     "fin": "2027-02-08",
+     "perfil": "S",
+     "hh": 107.1
+    },
+    {
+     "id": "t58",
+     "nombre": "Colocación de placas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-09",
+     "fin": "2027-02-16",
+     "perfil": "S",
+     "hh": 214.3
+    },
+    {
+     "id": "t59",
+     "nombre": "Marcar Nivel de Vertederos",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-08",
+     "fin": "2027-02-08",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t60",
+     "nombre": "Instalación de soportes de apoyo de canal vertedero",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-09",
+     "fin": "2027-02-09",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t61",
+     "nombre": "Instalación de banda de rodadura",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-09",
+     "fin": "2027-02-09",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t62",
+     "nombre": "Colocación conjunto canal vertedero sobre mensulas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-09",
+     "fin": "2027-02-09",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t63",
+     "nombre": "Unir canales vertederos",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-09",
+     "fin": "2027-02-09",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t64",
+     "nombre": "Atornillar canal vertedero a mensulas",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-03",
+     "fin": "2027-02-03",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t65",
+     "nombre": "Instalación de Vertedero",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-04",
+     "fin": "2027-02-04",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t66",
+     "nombre": "Tensar placas de vertederos",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-04",
+     "fin": "2027-02-04",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t67",
+     "nombre": "Instalación placas de espuma",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-05",
+     "fin": "2027-02-05",
+     "perfil": "S",
+     "hh": 26.8
+    },
+    {
+     "id": "t69",
+     "nombre": "Montaje de Equipos Electromecánicos",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-08",
+     "fin": "2027-02-19",
+     "perfil": "S",
+     "hh": 321.4
+    },
+    {
+     "id": "t70",
+     "nombre": "Montaje Parrila de Difusión de Aire",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-22",
+     "fin": "2027-02-23",
+     "perfil": "S",
+     "hh": 53.6
+    },
+    {
+     "id": "t71",
+     "nombre": "Montaje Mecánico Interconexiones hidráulicas y Soportes",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-02-24",
+     "fin": "2027-03-16",
+     "perfil": "S",
+     "hh": 562.5
+    },
+    {
+     "id": "t72",
+     "nombre": "Montaje Eléctrico de Canalizaciones",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-03-17",
+     "fin": "2027-03-23",
+     "perfil": "S",
+     "hh": 187.5
+    },
+    {
+     "id": "t73",
+     "nombre": "Montaje de Instrumentación",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-03-24",
+     "fin": "2027-03-25",
+     "perfil": "S",
+     "hh": 53.6
+    },
+    {
+     "id": "t74",
+     "nombre": "Canalización eléctrica y de Control",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-03-26",
+     "fin": "2027-03-29",
+     "perfil": "S",
+     "hh": 107.1
+    },
+    {
+     "id": "t75",
+     "nombre": "Comisionamiento Electromecánico",
+     "fase": "Montaje electromecánico",
+     "ini": "2027-03-30",
+     "fin": "2027-04-05",
+     "perfil": "S",
+     "hh": 187.5
+    },
+    {
+     "id": "t77",
+     "nombre": "Ajustes de Programación",
+     "fase": "Puesta en marcha",
+     "ini": "2027-04-06",
+     "fin": "2027-04-09",
+     "perfil": "S",
+     "hh": 102.6
+    },
+    {
+     "id": "t78",
+     "nombre": "Puesta a Punto",
+     "fase": "Puesta en marcha",
+     "ini": "2027-04-12",
+     "fin": "2027-05-12",
+     "perfil": "S",
+     "hh": 794.9
+    },
+    {
+     "id": "t79",
+     "nombre": "Capacitación",
+     "fase": "Puesta en marcha",
+     "ini": "2027-05-11",
+     "fin": "2027-05-12",
+     "perfil": "S",
+     "hh": 51.3
+    },
+    {
+     "id": "t80",
+     "nombre": "Performance Test",
+     "fase": "Puesta en marcha",
+     "ini": "2027-05-13",
+     "fin": "2027-05-13",
+     "perfil": "S",
+     "hh": 25.6
+    },
+    {
+     "id": "t81",
+     "nombre": "Recepción Final",
+     "fase": "Puesta en marcha",
+     "ini": "2027-05-14",
+     "fin": "2027-05-14",
+     "perfil": "S",
+     "hh": 25.6
+    }
+   ],
+   "cortes": [
+    {
+     "fecha": "2026-10-05",
+     "ep": "",
+     "avance": {
+      "t11": 90,
+      "t12": 100,
+      "t13": 0,
+      "t14": 92,
+      "t16": 52,
+      "t17": 56,
+      "t18": 0,
+      "t19": 100,
+      "t20": 0,
+      "t21": 0,
+      "t22": 0,
+      "t25": 100,
+      "t26": 85,
+      "t27": 100,
+      "t29": 0,
+      "t30": 0,
+      "t32": 0,
+      "t33": 28,
+      "t34": 0,
+      "t35": 0,
+      "t47": 0,
+      "t48": 0,
+      "t50": 0,
+      "t51": 0,
+      "t52": 0,
+      "t53": 0,
+      "t54": 0,
+      "t55": 0,
+      "t57": 0,
+      "t58": 0,
+      "t59": 0,
+      "t60": 0,
+      "t61": 0,
+      "t62": 0,
+      "t63": 0,
+      "t64": 0,
+      "t65": 0,
+      "t66": 0,
+      "t67": 0,
+      "t69": 0,
+      "t70": 0,
+      "t71": 0,
+      "t72": 0,
+      "t73": 0,
+      "t74": 0,
+      "t75": 0,
+      "t77": 0,
+      "t78": 0,
+      "t79": 0,
+      "t80": 0,
+      "t81": 0
+     }
+    }
+   ],
+   "creado": "2026-11-02T17:00:00Z",
+   "actualizado": "2026-11-02T17:00:00Z",
+   "fuente": "Gantt ID703-026-CG-G-01 corte 05-10-2026 (Excel). Sin HH: peso = % de fase (Ing 15, Sum 35, Log 10, Montaje 30, PEM 10) repartido por duración; el campo hh guarda puntos de peso.",
+   "unidad": "pts de peso"
   }
  }
 }

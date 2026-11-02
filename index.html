@@ -647,7 +647,7 @@ function viewConfig(p) {
     <p class="note">Con eso la app calcula sola: curva planeada con perfil S ponderada por HH, curva real, proyección al ritmo actual, SPI, atraso en puntos y en semanas, Earned Schedule y control de estados de pago.</p></div></div>
     ${local ? `<div class="card" style="display:grid;gap:12px"><h2>Respaldo y vista para compartir</h2>
     <p class="muted" style="margin:0">Los datos se guardan en este dispositivo. Descarga un respaldo después de cada corte: sirve para pasar los datos a otro equipo y para publicar la vista de solo lectura.</p>
-    <div class="row"><button class="btn primary" id="bkDown" type="button">Descargar respaldo (datos.json)</button><label class="btn" for="bkFile" style="display:inline-flex;align-items:center">Restaurar desde archivo</label><input id="bkFile" type="file" accept=".json,application/json" hidden></div>
+    <div class="row"><button class="btn primary" id="bkDown" type="button">Descargar respaldo (datos.json)</button><label class="btn" for="bkFile" style="display:inline-flex;align-items:center">Restaurar desde archivo</label><input id="bkFile" type="file" accept=".json,application/json" hidden><button class="btn" id="bkPub" type="button">Traer datos publicados del sitio</button></div>
     <p class="note" style="margin:0">Para actualizar lo que ven otros: sube ese datos.json al repositorio reemplazando el anterior. Link de solo lectura: <a href="${esc(location.origin + location.pathname)}?lectura">${esc(location.origin + location.pathname)}?lectura</a></p></div>` : ''}`;
 }
 function bindConfig() {
@@ -656,6 +656,10 @@ function bindConfig() {
   Object.entries(map).forEach(([id, k]) => $('#' + id)?.addEventListener('change', e => { let v = e.target.value; if (k === 'periodo') v = Math.max(1, parseInt(v) || 7); if (k === 'monto') v = v.trim() === '' ? '' : parseNum(v); startEdit()[k] = v; render(); }));
   $('#delProj').onclick = () => { S.confirm = 'proj'; render(); };
   $('#bkDown')?.addEventListener('click', backup);
+  $('#bkPub')?.addEventListener('click', async () => {
+    try { const r = await fetch('datos.json', {cache: 'no-store'}); if (!r.ok) throw 0; if (!loadInto(await r.json())) throw 0; S.dirty = false; S.draft = null; lwrite(allData().proyectos); render(); toast('Datos publicados cargados en este dispositivo'); }
+    catch (x) { toast('No se pudieron leer los datos publicados'); }
+  });
   $('#bkFile')?.addEventListener('change', async e => {
     const file = e.target.files[0]; if (!file) return;
     try { const o = JSON.parse(await file.text()); if (!loadInto(o)) throw 0; S.dirty = false; S.draft = null; lwrite(allData().proyectos); render(); toast('Datos restaurados'); }

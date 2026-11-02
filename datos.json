@@ -1,7 +1,7 @@
 {
  "app": "curva-s-ecopreneur",
  "version": 1,
- "exportado": "2026-11-02T18:00:00Z",
+ "exportado": "2026-11-02T18:30:00Z",
  "proyectos": {
   "carozzi-nos-montaje": {
    "actividades": [
@@ -696,7 +696,7 @@
      "ini": "2026-07-15",
      "fin": "2026-09-22",
      "perfil": "S",
-     "hh": 844.8
+     "hh": 910.8
     },
     {
      "id": "t26",
@@ -705,7 +705,7 @@
      "ini": "2026-07-15",
      "fin": "2026-10-23",
      "perfil": "S",
-     "hh": 1219.0
+     "hh": 1314.1
     },
     {
      "id": "t27",
@@ -714,16 +714,7 @@
      "ini": "2026-07-15",
      "fin": "2026-09-01",
      "perfil": "S",
-     "hh": 591.4
-    },
-    {
-     "id": "t29",
-     "nombre": "Estanque de Dosificación de 1,46 m3",
-     "fase": "Suministros",
-     "ini": "2026-12-22",
-     "fin": "2027-01-11",
-     "perfil": "S",
-     "hh": 253.4
+     "hh": 637.5
     },
     {
      "id": "t30",
@@ -732,7 +723,7 @@
      "ini": "2026-12-22",
      "fin": "2027-02-08",
      "perfil": "S",
-     "hh": 591.4
+     "hh": 637.5
     },
     {
      "id": "t32",
@@ -1069,7 +1060,6 @@
       "t25": 100,
       "t26": 85,
       "t27": 100,
-      "t29": 0,
       "t30": 0,
       "t32": 0,
       "t33": 28,
@@ -1126,7 +1116,6 @@
       "t25": 100,
       "t26": 88,
       "t27": 100,
-      "t29": 0,
       "t30": 0,
       "t32": 0,
       "t33": 44,
@@ -1183,7 +1172,6 @@
       "t25": 100,
       "t26": 95,
       "t27": 100,
-      "t29": 0,
       "t30": 0,
       "t32": 0,
       "t33": 80,
@@ -1240,7 +1228,6 @@
       "t25": 100,
       "t26": 100,
       "t27": 100,
-      "t29": 100,
       "t30": 0,
       "t32": 0,
       "t33": 100,
@@ -1281,8 +1268,8 @@
     }
    ],
    "creado": "2026-11-02T17:00:00Z",
-   "actualizado": "2026-11-02T18:00:00Z",
-   "fuente": "Gantt ID703-026-CG-G-01 corte 05-10-2026 (Excel). Sin HH: peso = % de fase (Ing 15, Sum 35, Log 10, Montaje 30, PEM 10) repartido por duración; el campo hh guarda puntos de peso. Cortes 05-10, 12-10, 19-10 y 26-10 desde PDF (% completado). Línea base: fechas del 05-10 (= 26-10).",
+   "actualizado": "2026-11-02T18:30:00Z",
+   "fuente": "Gantt ID703-026-CG-G-01 corte 05-10-2026 (Excel). Sin HH: peso = % de fase (Ing 15, Sum 35, Log 10, Montaje 30, PEM 10) repartido por duración; el campo hh guarda puntos de peso. Cortes 05-10, 12-10, 19-10 y 26-10 desde PDF (% completado). Línea base: fechas del 05-10 (= 26-10). Se excluye \"Estanque de Dosificación de 1,46 m3\" (actividad eliminada del alcance; su peso se reparte en Suministros).",
    "unidad": "pts de peso"
   }
  }

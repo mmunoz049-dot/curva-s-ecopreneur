@@ -11,7 +11,7 @@ App de control de plazo: curva S planeada vs real ponderada por HH, SPI, atraso 
 
 ## Vista de solo lectura para compartir
 
-El link `https://<usuario>.github.io/<repositorio>/?lectura` muestra solo el informe, con los datos de `datos.json` de este repositorio.
+El link `https://mmunoz049-dot.github.io/curva-s-ecopreneur/?lectura` muestra solo el informe, con los datos de `datos.json` de este repositorio.
 
 Para actualizarla después de un corte:
 1. En la app, descarga el respaldo `datos.json`.
@@ -20,7 +20,7 @@ Para actualizarla después de un corte:
 
 ## Publicar con GitHub Pages (una vez)
 
-Settings → Pages → Source: "Deploy from a branch" → Branch: `main` / carpeta `/ (root)` → Save. El sitio queda en `https://<usuario>.github.io/<repositorio>/`. GitHub Pages gratis requiere que el repositorio sea público; los datos de `datos.json` quedan visibles para quien tenga el link.
+Settings → Pages → Source: "Deploy from a branch" → Branch: `main` / carpeta `/ (root)` → Save. El sitio queda en https://mmunoz049-dot.github.io/curva-s-ecopreneur/. GitHub Pages gratis requiere que el repositorio sea público; los datos de `datos.json` quedan visibles para quien tenga el link.
 
 ## Archivos
 

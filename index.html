@@ -217,6 +217,7 @@ const LKEY = 'cs.proyectos';
 const lread = () => { try { return JSON.parse(localStorage.getItem(LKEY) || 'null'); } catch (e) { return null; } };
 const lwrite = o => { localStorage.setItem(LKEY, JSON.stringify(o)); };
 const wantRO = /[?&](lectura|ver)\b/.test(location.search);
+const onlyProj = new URLSearchParams(location.search).get('proyecto');
 const S = { projects: {}, order: [], cur: null, view: 'informe', cutSel: null, draft: null, dirty: false, loading: true, offline: false, confirm: null, editCut: null };
 try { const v = localStorage.getItem('cs.view'); if (v) S.view = v; const p = localStorage.getItem('cs.proj'); if (p) S.cur = p; } catch (e) {}
 const views = ['informe', 'avance', 'actividades', 'config'];
@@ -708,7 +709,12 @@ render();
   if (!db) {
     clearTimeout(timer); local = true;
     const pub = async () => { try { const r = await fetch('datos.json?v=' + Date.now(), {cache: 'no-store'}); return r.ok ? await r.json() : null; } catch (e) { return null; } };
-    if (wantRO) { readOnly = true; if (!loadInto(await pub())) toast('Aún no hay datos publicados'); }
+    if (wantRO) {
+      readOnly = true; let pd = await pub();
+      if (pd && onlyProj) { const pr = pd.proyectos || pd; pd = pr[onlyProj] ? {proyectos: {[onlyProj]: pr[onlyProj]}} : null; }
+      if (!loadInto(pd)) toast(onlyProj ? 'No se encontró el proyecto' : 'Aún no hay datos publicados');
+      if (onlyProj) { const ps = $('.projsel'); if (ps) ps.style.display = 'none'; }
+    }
     else {
       // lo guardado en el equipo + lo publicado en el sitio: entra lo nuevo y gana la versión más reciente de cada proyecto
       const mine = lread() || {}, pd = await pub(), pp = (pd && (pd.proyectos || pd)) || {};

@@ -13,6 +13,8 @@ App de control de plazo: curva S planeada vs real ponderada por HH, SPI, atraso 
 
 El link `https://mmunoz049-dot.github.io/curva-s-ecopreneur/?lectura` muestra solo el informe, con los datos de `datos.json` de este repositorio.
 
+Para un cliente, agrega el proyecto: `?lectura&proyecto=<id>` muestra solo ese proyecto, sin selector (ej. `?lectura&proyecto=pem-colun-537`).
+
 Para actualizarla después de un corte:
 1. En la app, descarga el respaldo `datos.json`.
 2. En GitHub, abre este repositorio → `datos.json` → lápiz o "Add file → Upload files" y reemplázalo.

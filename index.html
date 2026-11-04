@@ -361,6 +361,20 @@ function bindNew() {
 }
 
 /* ----- informe ----- */
+function summaryCard(M, p) {
+  if (!M || !M.hasCut) return `<div class="card"><h3>Resumen de actividades</h3><p class="muted">Carga un corte de avance para ver cuántas actividades están terminadas, adelantadas, al día o atrasadas.</p></div>`;
+  const cnt = s => M.actRows.filter(a => a.st === s).length;
+  const nAct = M.actRows.length, porIni = M.actRows.filter(a => a.st === 'Al día' && a.pa <= 0.005 && a.ra <= 0).length;
+  const tile = (n, lbl, cls, sub) => `<div class="state${cls === 'tot' ? ' tot' : ''}"><b class="${cls === 'tot' ? '' : cls}">${n}</b>${lbl}<span class="sp">${sub}</span></div>`;
+  const share = n => nAct ? pct(n / nAct, 0) + ' del total' : '';
+  return `<div class="card"><h3>Resumen de actividades al ${fD(M.cut)}</h3><div class="states" style="margin-top:8px">
+    ${tile(nAct, 'Total actividades', 'tot', Math.round(M.tot).toLocaleString('es-CL') + ' ' + UN(p))}
+    ${tile(cnt('Terminada'), 'Terminadas', '', share(cnt('Terminada')))}
+    ${tile(cnt('Adelantada'), 'Adelantadas', 'good', share(cnt('Adelantada')))}
+    ${tile(cnt('Al día'), 'Al día', '', porIni ? `${porIni === cnt('Al día') ? 'todas' : porIni} por iniciar según programa` : share(cnt('Al día')))}
+    ${tile(cnt('Atrasada'), 'Atrasadas', 'bad', share(cnt('Atrasada')))}</div></div>`;
+}
+
 function viewInforme(p) {
   const M = compute(p, S.cutSel);
   const head = `<div class="rephead"><div><h3>Curva S de avance físico</h3><h1>${esc(p.nombre)}</h1>
@@ -419,16 +433,7 @@ function viewInforme(p) {
   const topCard = `<div class="card"><h3>Las 10 actividades que más atrasan</h3>${top.length ? `<div class="tw"><table><thead><tr><th>Actividad</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Impacto</th></tr></thead><tbody>
     ${top.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
     </tbody></table></div><p class="note">Impacto: puntos del avance total que cada actividad le resta al proyecto.</p>` : '<p class="muted">Ninguna actividad está bajo su programa.</p>'}</div>`;
-  const cnt = s => M.actRows.filter(a => a.st === s).length;
-  const nAct = M.actRows.length, porIni = M.actRows.filter(a => a.st === 'Al día' && a.pa <= 0.005 && a.ra <= 0).length;
-  const tile = (n, lbl, cls, sub) => `<div class="state${cls === 'tot' ? ' tot' : ''}"><b class="${cls === 'tot' ? '' : cls}">${n}</b>${lbl}<span class="sp">${sub}</span></div>`;
-  const share = n => nAct ? pct(n / nAct, 0) + ' del total' : '';
-  const states = `<div class="card"><h3>Resumen de actividades al ${fD(M.cut)}</h3><div class="states" style="margin-top:8px">
-    ${tile(nAct, 'Total actividades', 'tot', Math.round(M.tot).toLocaleString('es-CL') + ' ' + UN(p))}
-    ${tile(cnt('Terminada'), 'Terminadas', '', share(cnt('Terminada')))}
-    ${tile(cnt('Adelantada'), 'Adelantadas', 'good', share(cnt('Adelantada')))}
-    ${tile(cnt('Al día'), 'Al día', '', porIni ? `${porIni === cnt('Al día') ? 'todas' : porIni} por iniciar según programa` : share(cnt('Al día')))}
-    ${tile(cnt('Atrasada'), 'Atrasadas', 'bad', share(cnt('Atrasada')))}</div></div>`;
+  const states = summaryCard(M, p);
   const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
   const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</span></div>`;
   return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
@@ -625,7 +630,8 @@ function viewActs(p) {
       <td><select class="in" data-i="${i}" data-k="perfil" aria-label="Perfil">${PERFILES.map(x => `<option${(a.perfil || 'S') === x ? ' selected' : ''}>${x}</option>`).join('')}</select></td>
       <td><button class="btn danger" data-del="${i}" type="button" aria-label="Quitar ${esc(a.nombre)}">×</button></td></tr>`).join('')}
     </tbody></table></div>
-    <p class="note">${acts.length} actividades · ${tot.toLocaleString('es-CL')} ${UN(p)}. Perfil S = avanza lento, rápido y lento (recomendado). Inicio o Final cargan el avance al comienzo o al cierre.</p></div>`;
+    <p class="note">${acts.length} actividades · ${tot.toLocaleString('es-CL')} ${UN(p)}. Perfil S = avanza lento, rápido y lento (recomendado). Inicio o Final cargan el avance al comienzo o al cierre.</p></div>
+    ${summaryCard(compute(p), p)}`;
 }
 function bindActs() {
   bindSaveBar();

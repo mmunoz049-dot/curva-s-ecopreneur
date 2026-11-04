@@ -132,7 +132,9 @@ tr.hl td{background:var(--warn-bg)}
 .bar span{position:absolute;inset:0 auto 0 0;border-radius:4px}
 .bar .p{background:color-mix(in srgb,var(--plan) 45%,transparent)}
 .bar .r{background:var(--real);height:4px;top:2px}
-.states{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.states{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.state .sp{display:block;font-size:.78rem;color:var(--ink-2);margin-top:2px}
+.state.tot{background:var(--brand);border-color:var(--brand);color:#fff}.state.tot .sp{color:#fff;opacity:.85}
 .state{border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center}
 .state b{display:block;font-family:var(--f-display);font-size:1.6rem}
 .alert{border-radius:6px;padding:10px 12px;font-weight:600}
@@ -164,7 +166,7 @@ td input.dt{width:140px}
 .empty p{max-width:56ch;margin:0}
 .issues{margin:0;padding-left:18px;color:var(--delay);font-size:.9rem}
 .selectwrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-@media (max-width:560px){.kpi .v{font-size:1.5rem}.states{grid-template-columns:repeat(2,1fr)}.hb{display:none}.top .wrap{gap:8px 12px}.top{position:static}th,td{padding:6px 4px}table{font-size:.85rem}.card{padding:12px}}
+@media (max-width:560px){.kpi .v{font-size:1.5rem}.states{grid-template-columns:repeat(2,1fr)}.state.tot{grid-column:1/-1}.hb{display:none}.top .wrap{gap:8px 12px}.top{position:static}th,td{padding:6px 4px}table{font-size:.85rem}.card{padding:12px}}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s}}
 </style>
 
@@ -418,13 +420,19 @@ function viewInforme(p) {
     ${top.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
     </tbody></table></div><p class="note">Impacto: puntos del avance total que cada actividad le resta al proyecto.</p>` : '<p class="muted">Ninguna actividad está bajo su programa.</p>'}</div>`;
   const cnt = s => M.actRows.filter(a => a.st === s).length;
-  const states = `<div class="card"><h3>Estado de actividades</h3><div class="states" style="margin-top:8px">
-    <div class="state"><b>${cnt('Terminada')}</b>Terminadas</div><div class="state"><b class="good">${cnt('Adelantada')}</b>Adelantadas</div>
-    <div class="state"><b>${cnt('Al día')}</b>Al día</div><div class="state"><b class="bad">${cnt('Atrasada')}</b>Atrasadas</div></div></div>`;
+  const nAct = M.actRows.length, porIni = M.actRows.filter(a => a.st === 'Al día' && a.pa <= 0.005 && a.ra <= 0).length;
+  const tile = (n, lbl, cls, sub) => `<div class="state${cls === 'tot' ? ' tot' : ''}"><b class="${cls === 'tot' ? '' : cls}">${n}</b>${lbl}<span class="sp">${sub}</span></div>`;
+  const share = n => nAct ? pct(n / nAct, 0) + ' del total' : '';
+  const states = `<div class="card"><h3>Resumen de actividades al ${fD(M.cut)}</h3><div class="states" style="margin-top:8px">
+    ${tile(nAct, 'Total actividades', 'tot', Math.round(M.tot).toLocaleString('es-CL') + ' ' + UN(p))}
+    ${tile(cnt('Terminada'), 'Terminadas', '', share(cnt('Terminada')))}
+    ${tile(cnt('Adelantada'), 'Adelantadas', 'good', share(cnt('Adelantada')))}
+    ${tile(cnt('Al día'), 'Al día', '', porIni ? `${porIni === cnt('Al día') ? 'todas' : porIni} por iniciar según programa` : share(cnt('Al día')))}
+    ${tile(cnt('Atrasada'), 'Atrasadas', 'bad', share(cnt('Atrasada')))}</div></div>`;
   const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
   const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</span></div>`;
   return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
-    <div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}${states}</div></div>${exp}`;
+    <div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}</div></div>${states}${exp}`;
 }
 
 function svgCurve(M) {

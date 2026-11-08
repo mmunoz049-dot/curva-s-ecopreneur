@@ -18,7 +18,7 @@
 :root{
   --bg:#F3F4F9; --surface:#FFFFFF; --surface-2:#E8EAF4; --line:#D7DBEA; --brand:#002478;
   --ink:#002478; --ink-2:#535C82; --ink-3:#7F87AC;
-  --plan:#5966AE; --real:#002478; --delay:#B8492F; --ahead:#0A8246; --ep:#D9861C; --warn-bg:#FBEDE8; --ok-bg:#E3F2EA;
+  --plan:#5966AE; --real:#002478; --delay:#B8492F; --ahead:#0A8246; --ep:#D9861C; --warn-bg:#FBEDE8; --ok-bg:#E3F2EA; --amber:#B07800; --amber-bg:#FCF1D6; --sem-off:#D9DCE8; --sem-house:#1B2244;
   --input:#FFF8E1; --focus:#5966AE;
   --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
   --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;
@@ -28,12 +28,12 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0B1230; --surface:#121B40; --surface-2:#19234D; --line:#2A3566; --brand:#0F2C8A;
   --ink:#E6E9F6; --ink-2:#A8B0D6; --ink-3:#7A83AE;
-  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326;
+  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326; --amber:#F0BE4A; --amber-bg:#3A3015; --sem-off:#2E3866; --sem-house:#070C22;
   --input:#2A2818; --focus:#9AA5E6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B1230; --surface:#121B40; --surface-2:#19234D; --line:#2A3566; --brand:#0F2C8A;
   --ink:#E6E9F6; --ink-2:#A8B0D6; --ink-3:#7A83AE;
-  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326;
+  --plan:#9AA5E6; --real:#E6E9F6; --delay:#EE7A5F; --ahead:#4FC184; --ep:#F0A848; --warn-bg:#3A231D; --ok-bg:#183326; --amber:#F0BE4A; --amber-bg:#3A3015; --sem-off:#2E3866; --sem-house:#070C22;
   --input:#2A2818; --focus:#9AA5E6; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
@@ -90,6 +90,28 @@ main{padding-block:20px 48px;display:grid;gap:18px}
 .kpi.date .v{font-size:1.45rem;white-space:nowrap}
 .kpi.bad .v{color:var(--delay)} .kpi.good .v{color:var(--ahead)}
 
+/* semáforo */
+.sem{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.35fr);gap:22px;align-items:center;border-left:6px solid var(--sc)}
+.sem.g{--sc:var(--ahead);--sb:var(--ok-bg)}.sem.y{--sc:var(--amber);--sb:var(--amber-bg)}.sem.r{--sc:var(--delay);--sb:var(--warn-bg)}
+.lights{display:flex;flex-direction:column;gap:7px;background:var(--sem-house);padding:9px 8px;border-radius:14px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.lights i{width:24px;height:24px;border-radius:50%;background:var(--sem-off);opacity:.55}
+.lights i.on.g{background:var(--ahead)}.lights i.on.y{background:var(--amber)}.lights i.on.r{background:var(--delay)}
+.lights i.on{opacity:1;box-shadow:0 0 0 3px rgba(255,255,255,.12),0 0 14px 2px currentColor}
+.lights i.g{color:var(--ahead)}.lights i.y{color:var(--amber)}.lights i.r{color:var(--delay)}
+.sem .lvl{font-family:var(--f-display);font-weight:700;font-size:1.7rem;line-height:1.05;color:var(--sc);text-transform:uppercase;letter-spacing:.02em}
+.sem .dv{font-family:var(--f-display);font-size:1.05rem;color:var(--ink);margin-top:2px}
+.sem .act{background:var(--sb);border-radius:6px;padding:10px 12px;margin-top:8px;font-weight:600;color:var(--ink)}
+.sem .act b{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--sc);margin-bottom:2px}
+.semleg{display:grid;gap:6px}
+.semleg div{display:grid;grid-template-columns:14px 92px minmax(0,1fr);gap:8px;align-items:start;padding:6px 8px;border-radius:6px;font-size:.88rem;color:var(--ink-2)}
+.semleg div.cur{background:var(--surface-2);color:var(--ink)}
+.semleg .dot{margin-top:4px}
+.semleg b{color:var(--ink);font-weight:700}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;flex:none}
+.dot.g{background:var(--ahead)}.dot.y{background:var(--amber)}.dot.r{background:var(--delay)}
+td .semtxt{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+@media (max-width:980px){.sem{grid-template-columns:auto minmax(0,1fr)}.semleg{grid-column:1/-1}}
+@media (max-width:560px){.sem{gap:14px}.lights i{width:18px;height:18px}.sem .lvl{font-size:1.35rem}.semleg div{grid-template-columns:14px 78px minmax(0,1fr)}}
 .grid2{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
 @media (max-width:980px){.grid2{grid-template-columns:minmax(0,1fr)}}
 .stack{display:grid;gap:18px;min-width:0}
@@ -204,7 +226,7 @@ const fD = n => { if (!isFinite(n)) return '—'; const d = new Date(Math.round(
 const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const nf = (x, d = 1) => isFinite(x) ? x.toLocaleString('es-CL', {minimumFractionDigits: d, maximumFractionDigits: d}) : '—';
 const pct = (x, d = 1) => isFinite(x) ? nf(x * 100, d) + '%' : '—';
-const pts = x => isFinite(x) ? (x > 0 ? '+' : x < 0 ? '−' : '') + nf(Math.abs(x * 100), 1) + ' pts' : '—';
+const pts = x => isFinite(x) ? (x > 0 ? '+' : x < 0 ? '−' : '') + nf(Math.abs(x * 100), 1) + ' pp' : '—';
 const sgn = (x, d = 1, u = '') => isFinite(x) ? (x > 0 ? '+' : x < 0 ? '−' : '') + nf(Math.abs(x), d) + u : '—';
 const money = x => isFinite(x) ? '$ ' + Math.round(x).toLocaleString('es-CL') : '—';
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
@@ -361,6 +383,13 @@ function bindNew() {
 }
 
 /* ----- informe ----- */
+/* semáforo de plazo por desviación en puntos porcentuales (real − planeado) */
+const SEM = [
+  {k: 'g', n: 'Verde', rango: 'Hasta 2 pp', acc: 'Seguimiento semanal.', det: 'Incluye avance adelantado.'},
+  {k: 'y', n: 'Amarillo', rango: 'Más de 2 y hasta 5 pp', acc: 'Medidas correctivas con responsable y fecha de recuperación.'},
+  {k: 'r', n: 'Rojo', rango: 'Más de 5 pp', acc: 'Plan de recuperación y revisión del impacto en hitos y término.'},
+];
+const semOf = dev => { const a = Math.round(-dev * 1000) / 10; return a <= 2 ? SEM[0] : a <= 5 ? SEM[1] : SEM[2]; };
 function summaryCard(M, p) {
   if (!M || !M.hasCut) return `<div class="card"><h3>Resumen de actividades</h3><p class="muted">Carga un corte de avance para ver cuántas actividades están terminadas, adelantadas, al día o atrasadas.</p></div>`;
   const cnt = s => M.actRows.filter(a => a.st === s).length;
@@ -396,6 +425,14 @@ function viewInforme(p) {
     ${k('Término programado', fD(M.finProg), 'línea base', 'date')}
     ${k('Término proyectado', fD(M.finProy), M.finProy > M.finProg ? dd(M.finProy - M.finProg) + ' tarde al ritmo actual' : 'en plazo al ritmo actual', M.finProy > M.finProg + 0.5 ? 'bad date' : 'date')}
   </div>`;
+  const sm = semOf(M.dev), atr = Math.round(-M.dev * 1000) / 10;
+  const semCard = `<div class="card sem ${sm.k}" role="status" aria-label="Semáforo de plazo: ${sm.n}">
+    <div class="lights" aria-hidden="true">${SEM.map(x => `<i class="${x.k}${x === sm ? ' on' : ''}"></i>`).join('')}</div>
+    <div><h3>Semáforo de plazo</h3><div class="lvl">${sm.n}</div>
+      <div class="dv">${atr > 0 ? `Atraso de ${nf(atr, 1)} pp` : atr < 0 ? `Adelanto de ${nf(-atr, 1)} pp` : 'Sin desviación'} <span class="muted small">· real ${pct(M.real)} vs planeado ${pct(M.prog)}</span></div>
+      <div class="act"><b>Acción requerida</b>${sm.acc}</div></div>
+    <div class="semleg">${SEM.map(x => `<div class="${x === sm ? 'cur' : ''}"><span class="dot ${x.k}"></span><b>${x.n}</b><span><b style="font-weight:600">${x.rango}.</b> ${x.acc}${x.det ? ' ' + x.det : ''}</span></div>`).join('')}</div>
+  </div>`;
   const chart = `<div class="card chartcard"><h2>Planeado vs real</h2><p class="note">Vertical: cuánto avance falta. Horizontal: cuántas semanas vamos detrás.</p>${svgCurve(M)}
     <div class="legend"><span><i style="border-color:var(--plan)"></i>Planeado (línea base)</span><span><i style="border-color:var(--real)"></i>Real</span><span><i class="d" style="border-color:var(--real)"></i>Proyección al ritmo actual</span><span><i class="m"></i>Estado de pago (contratista)</span></div></div>`;
   const esRows = [
@@ -426,8 +463,8 @@ function viewInforme(p) {
     </tbody></table></div>`;
   }
   const epCard = `<div class="card" style="display:grid;gap:10px"><h3>Control de estados de pago</h3>${epHtml}</div>`;
-  const fase = `<div class="card"><h3>Avance por fase</h3><div class="tw"><table><thead><tr><th>Fase</th><th class="n">Peso</th><th class="hb">Planeado / real</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Desvío</th></tr></thead><tbody>
-    ${M.faseRows.map(f => `<tr><td>${esc(f.f)}<div class="f">${f.n} act. · ${f.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(f.w, 0)}</td><td class="hb"><div class="bar" title="Planeado ${pct(f.p)} · Real ${pct(f.r)}"><span class="p" style="width:${f.p * 100}%"></span><span class="r" style="width:${f.r * 100}%"></span></div></td><td class="n">${pct(f.p, 0)}</td><td class="n">${pct(f.r, 0)}</td><td class="n ${f.r - f.p < -0.0005 ? 'bad' : f.r - f.p > 0.0005 ? 'good' : ''}">${pts(f.r - f.p)}</td></tr>`).join('')}
+  const fase = `<div class="card"><h3>Avance por fase</h3><div class="tw"><table><thead><tr><th>Fase</th><th class="n">Peso</th><th class="hb">Planeado / real</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Desvío</th><th>Semáforo</th></tr></thead><tbody>
+    ${M.faseRows.map(f => `<tr><td>${esc(f.f)}<div class="f">${f.n} act. · ${f.hh.toLocaleString('es-CL')} ${UN(p)}</div></td><td class="n">${pct(f.w, 0)}</td><td class="hb"><div class="bar" title="Planeado ${pct(f.p)} · Real ${pct(f.r)}"><span class="p" style="width:${f.p * 100}%"></span><span class="r" style="width:${f.r * 100}%"></span></div></td><td class="n">${pct(f.p, 0)}</td><td class="n">${pct(f.r, 0)}</td><td class="n ${f.r - f.p < -0.0005 ? 'bad' : f.r - f.p > 0.0005 ? 'good' : ''}">${pts(f.r - f.p)}</td><td><span class="semtxt"><span class="dot ${semOf(f.r - f.p).k}"></span>${semOf(f.r - f.p).n}</span></td></tr>`).join('')}
     </tbody></table></div></div>`;
   const top = M.actRows.filter(a => a.imp < -0.00005).sort((a, b) => a.imp - b.imp).slice(0, 10);
   const topCard = `<div class="card"><h3>Las 10 actividades que más atrasan</h3>${top.length ? `<div class="tw"><table><thead><tr><th>Actividad</th><th class="n">Prog.</th><th class="n">Real</th><th class="n">Impacto</th></tr></thead><tbody>
@@ -437,7 +474,7 @@ function viewInforme(p) {
   const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
   const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</span></div>`;
   return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
-    <div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}</div></div>${states}${exp}`;
+    ${semCard}<div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}</div></div>${states}${exp}`;
 }
 
 function svgCurve(M) {

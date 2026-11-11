@@ -76,6 +76,9 @@ main{padding-block:20px 48px;display:grid;gap:18px}
 .rephead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end}
 .rephead h1{font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:700;line-height:1.1}
 .rephead .meta{color:var(--ink-2);font-size:.95rem}
+.rephead .resp{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;margin:6px 0 4px;font-size:.95rem}
+.rephead .resp dt{color:var(--ink-2);font-weight:600}
+.rephead .resp dd{margin:0;color:var(--ink);font-weight:700}
 .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-weight:700;font-size:.9rem}
 .chip.late{background:var(--warn-bg);color:var(--delay)}
 .chip.ok{background:var(--ok-bg);color:var(--ahead)}
@@ -233,6 +236,7 @@ const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const PERFILES = ['S', 'Lineal', 'Inicio', 'Final'];
 const F = (x, p) => p === 'Lineal' ? x : p === 'Inicio' ? 1 - (1 - x) ** 2 : p === 'Final' ? x * x : 3 * x * x - 2 * x * x * x;
 const dd = x => { const t = nf(x, 0); return t + (t === '1' ? ' día' : ' días'); };
+const PM_DEF = 'Miguel Muñoz F.';
 const UN = p => (p && p.unidad) || 'HH';
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -375,7 +379,7 @@ function bindNew() {
   $('#np-ok').onclick = async () => {
     const nombre = $('#np-nombre').value.trim(); if (!nombre) { toast('Escribe un nombre para el proyecto'); return; }
     const id = nombre.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '-' + uid();
-    const p = {nombre, cliente: $('#np-cliente').value.trim(), contratista: $('#np-contratista').value.trim(), empresa: 'ECOPRENEUR',
+    const p = {nombre, cliente: $('#np-cliente').value.trim(), contratista: $('#np-contratista').value.trim(), empresa: 'ECOPRENEUR', pm: PM_DEF,
       inicio: $('#np-inicio').value || '', periodo: 7, monto: '', actividades: [], cortes: [], creado: new Date().toISOString()};
     S.projects[id] = p; if (!S.order.includes(id)) S.order.push(id); S.cur = id; S.newProj = false; S.view = 'actividades';
     await save(p, id); render();
@@ -407,6 +411,7 @@ function summaryCard(M, p) {
 function viewInforme(p) {
   const M = compute(p, S.cutSel);
   const head = `<div class="rephead"><div><h3>Curva S de avance físico</h3><h1>${esc(p.nombre)}</h1>
+    <dl class="resp"><dt>Jefe de Proyecto</dt><dd>${esc(p.jefe || '—')}</dd><dt>Project Manager</dt><dd>${esc(p.pm || PM_DEF)}</dd></dl>
     <div class="meta">${[p.cliente && 'Cliente: ' + esc(p.cliente), p.contratista && 'Contratista: ' + esc(p.contratista), p.empresa && 'Control: ' + esc(p.empresa)].filter(Boolean).join(' · ')}</div></div>`;
   if (!M || !M.hasCut) {
     return `<div class="card" style="display:grid;gap:14px">${head}</div></div>
@@ -694,7 +699,7 @@ function viewConfig(p) {
   const confirmDel = S.confirm === 'proj' ? `<div class="confirm"><span>Se borrará el proyecto con todas sus actividades y cortes.</span><button class="btn danger" id="delProjYes" type="button">Eliminar proyecto</button><button class="btn" id="delProjNo" type="button">Cancelar</button></div>` : '';
   return `<div class="grid2"><div class="card" style="display:grid;gap:14px"><h2>Datos del proyecto</h2>
     <div class="formgrid">${f('c-nombre', 'Nombre del proyecto', p.nombre)}${f('c-inicio', 'Inicio de la curva', p.inicio, 'date')}
-    ${f('c-cliente', 'Cliente', p.cliente)}${f('c-contratista', 'Contratista', p.contratista)}${f('c-empresa', 'Control a cargo de', p.empresa)}
+    ${f('c-jefe', 'Jefe de Proyecto', p.jefe || '')}${f('c-pm', 'Project Manager', p.pm || PM_DEF)}${f('c-cliente', 'Cliente', p.cliente)}${f('c-contratista', 'Contratista', p.contratista)}${f('c-empresa', 'Control a cargo de', p.empresa)}
     ${f('c-periodo', 'Periodo de control (días)', p.periodo ?? 7, 'number')}${f('c-unidad', 'Unidad del peso de actividades', p.unidad || 'HH', 'text', 'HH, $, puntos…')}${f('c-monto', 'Monto contrato del contratista ($) · opcional', p.monto ?? '', 'text', 'Para ver los EP en pesos')}</div>
     ${S.dirty ? `<div class="row"><button class="btn primary" id="saveAll" type="button">Guardar cambios</button><button class="btn" id="discard" type="button">Descartar</button></div>` : ''}
     <div class="row"><button class="btn danger" id="delProj" type="button">Eliminar proyecto</button>${confirmDel}</div></div>
@@ -707,7 +712,7 @@ function viewConfig(p) {
 }
 function bindConfig() {
   bindSaveBar(); bindGo();
-  const map = {'c-nombre': 'nombre', 'c-inicio': 'inicio', 'c-cliente': 'cliente', 'c-contratista': 'contratista', 'c-empresa': 'empresa', 'c-periodo': 'periodo', 'c-monto': 'monto', 'c-unidad': 'unidad'};
+  const map = {'c-nombre': 'nombre', 'c-inicio': 'inicio', 'c-cliente': 'cliente', 'c-jefe': 'jefe', 'c-pm': 'pm', 'c-contratista': 'contratista', 'c-empresa': 'empresa', 'c-periodo': 'periodo', 'c-monto': 'monto', 'c-unidad': 'unidad'};
   Object.entries(map).forEach(([id, k]) => $('#' + id)?.addEventListener('change', e => { let v = e.target.value; if (k === 'periodo') v = Math.max(1, parseInt(v) || 7); if (k === 'monto') v = v.trim() === '' ? '' : parseNum(v); startEdit()[k] = v; render(); }));
   $('#delProj').onclick = () => { S.confirm = 'proj'; render(); };
   $('#bkDown')?.addEventListener('click', backup);

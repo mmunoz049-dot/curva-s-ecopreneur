@@ -418,8 +418,9 @@ function viewInforme(p) {
     <div class="card" style="display:grid;gap:12px"><h2>Faltan datos para el informe</h2><p class="muted">Completa lo mínimo y el informe aparece solo.</p>${reqList(p)}</div>`;
   }
   const late = M.svt < -0.05, ahead = M.svt > 0.05;
+  const estNote = M.C.nota ? `<p class="note" style="margin:0">Corte estimado: ${esc(M.C.nota)}.</p>` : '';
   const status = late ? `<span class="chip late">▼ Atraso de ${dd(-M.svt * 7)}</span>` : ahead ? `<span class="chip ahead">▲ Adelanto de ${dd(M.svt * 7)}</span>` : `<span class="chip ok">● Al día</span>`;
-  const cutSel = `<div class="selectwrap"><label class="small muted" for="cutSel">Fecha de corte</label><select class="in" id="cutSel" style="width:auto">${M.cortes.map((c, i) => `<option value="${i}"${i === M.ci ? ' selected' : ''}>${fD(toN(c.fecha))}</option>`).join('')}</select>${status}</div>`;
+  const cutSel = `<div class="selectwrap"><label class="small muted" for="cutSel">Fecha de corte</label><select class="in" id="cutSel" style="width:auto">${M.cortes.map((c, i) => `<option value="${i}"${i === M.ci ? ' selected' : ''}>${fD(toN(c.fecha))}${c.nota ? ' (estimado)' : ''}</option>`).join('')}</select>${status}</div>`;
   const k = (l, v, s, cls = '') => `<div class="kpi ${cls}"><span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
   const kpis = `<div class="kpis">
     ${k('% Planeado', pct(M.prog), 'según línea base')}
@@ -478,7 +479,7 @@ function viewInforme(p) {
   const states = summaryCard(M, p);
   const bars = `<div class="card"><h2>Avance semanal planeado vs real</h2>${svgBars(M)}<div class="legend"><span><i style="border-color:var(--plan);border-top-width:8px"></i>Planeado en la semana</span><span><i style="border-color:var(--real);border-top-width:8px"></i>Real entre cortes</span></div>${M.realPts.length && M.realPts[0].d > M.start + M.per ? `<p class="note">El primer corte (${fD(M.realPts[0].d)}) trae ${pct(M.realPts[0].v)} acumulado desde el inicio, por eso no se dibuja como avance de una semana. Las barras reales aparecen desde el segundo corte; si entre dos cortes pasan varias semanas, el avance se reparte entre ellas.</p>` : ''}</div>`;
   const exp = readOnly ? `<p class="note">Vista de solo lectura · ${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</p>` : `<div class="row"><button class="btn" id="expCsv" type="button">Descargar tabla semanal (Excel)</button><span class="note">${M.cortes.length} ${M.cortes.length === 1 ? 'corte' : 'cortes'} · ${M.acts.length} actividades · ${M.tot.toLocaleString('es-CL')} ${UN(p)}</span></div>`;
-  return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${kpis}</div>
+  return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${estNote}${kpis}</div>
     ${semCard}<div class="grid2"><div class="stack">${chart}${bars}${fase}</div><div class="stack">${es}${epCard}${topCard}</div></div>${states}${exp}`;
 }
 

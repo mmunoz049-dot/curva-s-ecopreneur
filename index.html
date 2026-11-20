@@ -120,6 +120,7 @@ td .semtxt{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .foco .fk div{background:var(--surface);padding:10px 12px}
 .foco .fk b{display:block;font-family:var(--f-display);font-size:1.45rem;line-height:1.1}
 .foco .fk span{font-size:.8rem;color:var(--ink-2)}
+td.dot2 b{font-family:var(--f-display);font-size:1.1rem}
 .tag{display:inline-block;border-radius:999px;padding:1px 8px;font-size:.78rem;font-weight:700;white-space:nowrap}
 .tag.v{background:var(--warn-bg);color:var(--delay)}.tag.c{background:var(--amber-bg);color:var(--amber)}.tag.n{background:var(--surface-2);color:var(--ink-2)}
 td.gap{font-family:var(--f-data);white-space:nowrap}
@@ -258,6 +259,8 @@ const lwrite = o => { localStorage.setItem(LKEY, JSON.stringify(o)); };
 const wantRO = /[?&](lectura|ver)\b/.test(location.search);
 const onlyProj = new URLSearchParams(location.search).get('proyecto');
 const vistaAtr = new URLSearchParams(location.search).get('vista') === 'atrasos';
+const QP = new URLSearchParams(location.search), JORN = Math.max(1, +QP.get('jornada') || 9), RECUP = Math.max(1, Math.round(+QP.get('recupera') || 10));
+const wdays = (a, b) => { let n = 0; for (let d = Math.ceil(a); d < Math.ceil(b); d++) { const w = new Date(d * DAY).getUTCDay(); if (w && w < 6) n++; } return n; };
 const focoQ = (new URLSearchParams(location.search).get('foco') || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const S = { projects: {}, order: [], cur: null, view: 'informe', cutSel: null, draft: null, dirty: false, loading: true, offline: false, confirm: null, editCut: null };
@@ -426,24 +429,29 @@ function atrasosView(p, M, parts) {
   const fd = n => fD(n), cut = M.cut;
   const late = M.actRows.filter(a => a.st === 'Atrasada').map(a => {
     const fin = a.e - 1, venc = a.ra < 1 && fin < cut ? Math.round(cut - fin) : 0, ini0 = a.ra <= 0 && a.s < cut;
-    return {...a, fin, venc, est: venc ? 'Vencida' : ini0 ? 'Sin iniciar' : 'En curso'};
+    const pend = a.hh * (1 - a.ra), dLB = a.e > cut ? wdays(cut, a.e) : 0, dias = Math.max(dLB, RECUP);
+    const dProg = Math.max(1, wdays(a.s, a.e)), pProg = Math.ceil(a.hh / (dProg * JORN) - 1e-9), pNec = Math.max(1, Math.ceil(pend / (dias * JORN) - 1e-9));
+    return {...a, fin, venc, est: venc ? 'Vencida' : ini0 ? 'Sin iniciar' : 'En curso', pend, dias, porLB: dLB >= RECUP, pProg, pNec};
   }).sort((x, y) => x.imp - y.imp);
+  const conHH = UN(p) === 'HH', ppl = n => n + (n === 1 ? ' persona' : ' personas');
   const fFoco = focoQ ? M.faseRows.find(f => norm(f.f).includes(focoQ)) : null;
   const tag = a => a.est === 'Vencida' ? `<span class="tag v">Vencida hace ${dd(a.venc)}</span>` : a.est === 'Sin iniciar' ? `<span class="tag c">Debió iniciar el ${fd(a.s)}</span>` : `<span class="tag n">En curso</span>`;
-  const tbl = rows => `<div class="tw"><table><thead><tr><th>Actividad</th><th class="lb">Línea base</th><th class="n">Prog.</th><th class="n">Real</th><th class="n lb">Brecha</th><th class="lb">Estado</th><th class="n">Impacto</th></tr></thead><tbody>
-    ${rows.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh.toLocaleString('es-CL')} ${UN(p)}</div><div class="ph">${tag(a)}</div></td><td class="small lb">${fd(a.s)} al ${fd(a.fin)}</td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n gap bad lb">${nf((a.pa - a.ra) * 100, 0)} pp</td><td class="lb">${tag(a)}</td><td class="n bad">${pts(a.imp)}</td></tr>`).join('')}
+  const tbl = rows => `<div class="tw"><table><thead><tr><th>Actividad</th><th class="lb">Línea base</th><th class="n">Prog.</th><th class="n">Real</th><th class="n lb">Brecha</th><th class="lb">Estado</th><th class="n">Impacto</th>${conHH ? '<th class="n lb">HH pend.</th><th class="n lb">Plazo</th><th class="n lb">Dotación</th>' : ''}</tr></thead><tbody>
+    ${rows.map(a => `<tr><td>${esc(a.nombre)}<div class="f">${esc(a.fase || '')} · ${a.hh.toLocaleString('es-CL')} ${UN(p)}</div><div class="ph">${tag(a)}${conHH ? `<div class="small" style="margin-top:4px"><b>Dotación: ${ppl(a.pNec)}</b> <span class="muted">(prog. ${a.pProg}) · ${Math.round(a.pend).toLocaleString('es-CL')} HH en ${a.dias} d.h.${a.porLB ? '' : '*'}</span></div>` : ''}</div></td><td class="small lb">${fd(a.s)} al ${fd(a.fin)}</td><td class="n">${pct(a.pa, 0)}</td><td class="n">${pct(a.ra, 0)}</td><td class="n gap bad lb">${nf((a.pa - a.ra) * 100, 0)} pp</td><td class="lb">${tag(a)}</td><td class="n bad">${pts(a.imp)}</td>${conHH ? `<td class="n lb">${Math.round(a.pend).toLocaleString('es-CL')}</td><td class="n lb small">${a.dias} d.h.${a.porLB ? '' : '*'}</td><td class="n dot2 lb"><b>${a.pNec}</b><span class="small muted"> pers.</span><div class="small muted">prog. ${a.pProg}</div></td>` : ''}</tr>`).join('')}
     </tbody></table></div>`;
+  const supu = `<p class="note"><b>Cómo se calcula la dotación:</b> personas = HH pendientes ÷ (días hábiles × ${JORN} h). HH pendientes = HH de la tarea × (1 − % real). Plazo: días hábiles (lunes a viernes) desde el corte hasta el término de línea base; si quedan menos de ${RECUP}, o la tarea ya venció, se usa un plazo de recuperación de ${RECUP} días hábiles (marcado con *). "Prog." es la dotación que el programa supone para la tarea completa. Supuestos: jornada de ${JORN} h por persona, rendimiento igual al del programa, sin horas extra ni turnos dobles.</p>`;
   let focoCard = '';
   const rest = fFoco ? late.filter(a => (a.fase || 'Sin fase') !== fFoco.f) : late;
   if (fFoco) {
     const fl = late.filter(a => (a.fase || 'Sin fase') === fFoco.f), sm = semOf(fFoco.r - fFoco.p);
     const impF = fl.reduce((t, a) => t + a.imp, 0), hhP = fl.reduce((t, a) => t + a.hh * (a.pa - a.ra), 0);
+    const nNec = fl.reduce((t, a) => t + a.pNec, 0), nProg = fl.reduce((t, a) => t + a.pProg, 0), hhPend = fl.reduce((t, a) => t + a.pend, 0);
     focoCard = `<div class="card foco" style="display:grid;gap:10px"><h3>Foco · ${esc(fFoco.f)}</h3>
-      <div class="fk"><div><b>${pct(fFoco.p, 0)}</b><span>avance planeado de la fase</span></div><div><b>${pct(fFoco.r, 0)}</b><span>avance real de la fase</span></div><div><b class="bad">${pts(fFoco.r - fFoco.p)}</b><span>desvío de la fase</span></div><div><b><span class="dot ${sm.k}"></span> ${sm.n}</b><span>semáforo de la fase</span></div><div><b class="bad">${fl.length} de ${fFoco.n}</b><span>actividades atrasadas</span></div><div><b class="bad">${Math.round(hhP).toLocaleString('es-CL')}</b><span>${UN(p)} atrasadas por recuperar</span></div><div><b class="bad">${pts(impF)}</b><span>le resta al avance total</span></div></div>
+      <div class="fk"><div><b>${pct(fFoco.p, 0)}</b><span>avance planeado de la fase</span></div><div><b>${pct(fFoco.r, 0)}</b><span>avance real de la fase</span></div><div><b class="bad">${pts(fFoco.r - fFoco.p)}</b><span>desvío de la fase</span></div><div><b><span class="dot ${sm.k}"></span> ${sm.n}</b><span>semáforo de la fase</span></div><div><b class="bad">${fl.length} de ${fFoco.n}</b><span>actividades atrasadas</span></div><div><b class="bad">${Math.round(hhP).toLocaleString('es-CL')}</b><span>${UN(p)} atrasadas por recuperar</span></div><div><b class="bad">${pts(impF)}</b><span>le resta al avance total</span></div>${conHH && fl.length ? `<div><b>${Math.round(hhPend).toLocaleString('es-CL')}</b><span>HH pendientes para terminar las atrasadas</span></div><div><b class="bad">${nNec}</b><span>personas necesarias en paralelo (programa: ${nProg})</span></div>` : ''}</div>
       ${fl.length ? tbl(fl) : '<p class="muted">Ninguna actividad de esta fase está bajo su programa.</p>'}
-      <p class="note"><b>Acción requerida (${sm.n.toLowerCase()}):</b> ${sm.acc} Brecha: puntos que la actividad va bajo su propio programa. Impacto: puntos que le resta al avance total del proyecto.</p></div>`;
+      <p class="note"><b>Acción requerida (${sm.n.toLowerCase()}):</b> ${sm.acc} Brecha: puntos que la actividad va bajo su propio programa. Impacto: puntos que le resta al avance total del proyecto.</p>${conHH && fl.length ? supu : ''}</div>`;
   }
-  const restCard = `<div class="card" style="display:grid;gap:10px"><h3>${fFoco ? 'Otras actividades atrasadas' : 'Actividades atrasadas'} (${rest.length})</h3>${rest.length ? tbl(rest) : '<p class="muted">No hay otras actividades bajo su programa.</p>'}</div>`;
+  const restCard = `<div class="card" style="display:grid;gap:10px"><h3>${fFoco ? 'Otras actividades atrasadas' : 'Actividades atrasadas'} (${rest.length})</h3>${rest.length ? tbl(rest) : '<p class="muted">No hay otras actividades bajo su programa.</p>'}${conHH && rest.length && !fFoco ? supu : ''}</div>`;
   const vencidas = late.filter(a => a.est === 'Vencida').length, sinIni = late.filter(a => a.est === 'Sin iniciar').length;
   const lead = `<div class="card" style="display:grid;gap:6px"><h3>Tareas atrasadas al ${fd(cut)}</h3><p style="margin:0">${late.length} de ${M.actRows.length} actividades van bajo su programa: ${vencidas} ya debían estar terminadas, ${sinIni} debían haber partido y no tienen avance, y ${late.length - vencidas - sinIni} van en curso pero lentas. En conjunto le restan ${pts(late.reduce((t, a) => t + a.imp, 0)).replace('−', '')} al avance total.</p></div>`;
   return `<div class="card" style="display:grid;gap:14px">${head}${cutSel}</div>${estNote}${kpis}</div>
